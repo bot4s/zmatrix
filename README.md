@@ -2,6 +2,10 @@
 
 A [matrix](https://matrix.org/) client implemented using ZIO.
 
+| CI              | Release                                                               | Snapshot                                                                 |
+| --------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| ![CI][badge-ci] | [![Release Artifacts][badge-sonatypereleases]][link-sonatypereleases] | [![Snapshot Artifacts][badge-sonatypesnapshots]][link-sonatypesnapshots] |
+
 ## Installation
 
 The lib is currently not released on any artifactory, the first version should be out pretty soon.
@@ -17,6 +21,19 @@ Add the following dependency to your project's build file
 ```scala
 "com.bot4s" %% "zmatrix" % "0.0.1"
 ```
+
+It is also possible to get the latest snapshot from [Snapshot Artifacts][link-sonatypesnapshots] by adding the following
+lines to your `build.sc`:
+
+```scala
+def repositories = super.repositories ++ Seq(
+  MavenRepository("https://oss.sonatype.org/content/repositories/snapshots")
+)
+```
+
+And then `ivy"com.bot4s::zmatrix:$SNAPSHOT-VERSION"`
+
+## Description
 
 zmatrix is a library designed to communicate with a Matrix API.
 
@@ -111,3 +128,9 @@ mill -i examples[_].run
 The design of the lib was heavily inspired by the work done on [zio-slack](https://github.com/Dapperware/zio-slack/blob/master/README.md).
 
 The actual endpoint implementation and reference for the Matrix API is taken from [matrix-nio](https://github.com/poljar/matrix-nio/) project, written in python.
+
+[link-sonatypereleases]: https://oss.sonatype.org/content/repositories/releases/com/bot4s/zmatrix_2.13/ "Sonatype Releases"
+[link-sonatypesnapshots]: https://oss.sonatype.org/content/repositories/snapshots/com/bot4s/zmatrix_2.13/ "Sonatype Snapshots"
+[badge-ci]: https://github.com/bot4s/zmatrix/workflows/Build/badge.svg
+[badge-sonatypereleases]: https://img.shields.io/nexus/r/https/oss.sonatype.org/com.bots4s/zmatrix_2.13.svg "Sonatype Releases"
+[badge-sonatypesnapshots]: https://img.shields.io/nexus/s/https/oss.sonatype.org/com.bot4s/zmatrix_2.13.svg "Sonatype Snapshots"

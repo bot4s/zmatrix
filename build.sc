@@ -14,12 +14,7 @@ object Versions {
 
 val scalaVersions = List("2.12.13", "2.13.5")
 
-object core extends Cross[CoreModule](scalaVersions: _*)
-
-class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with PublishModule {
-
-  import Versions._
-
+trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
   override def publishVersion = "0.0.1"
 
@@ -33,6 +28,13 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
       Developer("ex0ns", "ex0ns", "https://github.com/ex0ns")
     )
   )
+}
+
+object core extends Cross[CoreModule](scalaVersions: _*)
+
+class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Publishable {
+
+  import Versions._
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
