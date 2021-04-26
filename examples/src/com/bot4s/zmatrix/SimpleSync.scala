@@ -34,7 +34,9 @@ object SimpleSync extends ExampleApp {
       for {
         _ <- log.error("Invalid or empty token provided, trying password authentication")
         // We want to retry authentication only in case of network error, any other error should terminate the fiber instead
-        _ <- Authentication.refresh.refineOrDie { case x: NetworkError => x }.retry(Schedule.exponential(1.seconds))
+        _ <- Authentication.refresh.refineOrDie { case x: NetworkError => x }
+               .retry(Schedule.exponential(1.seconds))
+               .tap(token => log.info(token.token))
         x <- mainLoop
       } yield x
     }
