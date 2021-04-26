@@ -7,7 +7,8 @@ object Runner extends zio.App {
 
   private def examples = Map(
     "Simple"     -> Simple,
-    "SimpleSync" -> SimpleSync
+    "SimpleSync" -> SimpleSync,
+    "CreateRoom" -> CreateRoom
   )
 
   def run(args: List[String]): URIO[ZEnv, ExitCode] = {

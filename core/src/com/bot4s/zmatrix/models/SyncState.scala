@@ -1,13 +1,16 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.{ Decoder, KeyDecoder }
-import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
+import io.circe.{ Decoder, Encoder, KeyDecoder }
+import io.circe.generic.extras.semiauto.{ deriveConfiguredDecoder, deriveConfiguredEncoder }
 
 final case class RoomId(id: String) extends AnyVal
 
 object StateDecoder {
   implicit val roomIdDecoder: Decoder[RoomId] =
     deriveConfiguredDecoder[RoomId] or Decoder[String].map(x => RoomId(x))
+
+  implicit val roomIdEncoder: Encoder[RoomId] =
+    deriveConfiguredEncoder[RoomId]
 
   implicit val roomIdKeyDecoder: KeyDecoder[RoomId] = new KeyDecoder[RoomId] {
     override def apply(key: String): Some[RoomId] = Some(RoomId(key))
