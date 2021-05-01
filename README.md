@@ -136,5 +136,5 @@ The actual endpoint implementation and reference for the Matrix API is taken fro
 [link-sonatypereleases]: https://oss.sonatype.org/content/repositories/releases/com/bot4s/zmatrix_2.13/ "Sonatype Releases"
 [link-sonatypesnapshots]: https://oss.sonatype.org/content/repositories/snapshots/com/bot4s/zmatrix_2.13/ "Sonatype Snapshots"
 [badge-ci]: https://github.com/bot4s/zmatrix/workflows/Build/badge.svg
-[badge-sonatypereleases]: https://img.shields.io/nexus/r/https/oss.sonatype.org/com.bots4s/zmatrix_2.13.svg "Sonatype Releases"
+[badge-sonatypereleases]: https://img.shields.io/nexus/r/https/oss.sonatype.org/com.bot4s/zmatrix_2.13.svg "Sonatype Releases"
 [badge-sonatypesnapshots]: https://img.shields.io/nexus/s/https/oss.sonatype.org/com.bot4s/zmatrix_2.13.svg "Sonatype Snapshots"
