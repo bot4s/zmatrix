@@ -6,7 +6,7 @@ import mill.scalalib._
 object Versions {
   val zioMagicVersion   = "0.2.3"
   val zioLoggingVersion = "0.5.8"
-  val zioVersion        = "1.0.3"
+  val zioVersion        = "1.0.7"
   val sttpVersion       = "3.2.3"
   val circeVersion      = "0.13.0"
   val pureConfigVersion = "0.14.1"
@@ -16,7 +16,7 @@ val scalaVersions = List("2.12.13", "2.13.5")
 
 trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
-  override def publishVersion = "0.0.1"
+  override def publishVersion = "0.1.0"
 
   override def pomSettings = PomSettings(
     description = "Matrix.org API client written using ZIO",

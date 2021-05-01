@@ -8,18 +8,13 @@ A [matrix](https://matrix.org/) client implemented using ZIO.
 
 ## Installation
 
-The lib is currently not released on any artifactory, the first version should be out pretty soon.
-It is possible to use it by cloning this repository and publishing the jar locally:
-
-```
-mill __.publishM2Local
-mill __.publishLocal
-```
-
 Add the following dependency to your project's build file
 
 ```scala
-"com.bot4s" %% "zmatrix" % "0.0.1"
+// sbt
+"com.bot4s" %% "zmatrix" % "0.1.0"
+// mill
+ivy"com.bot4s::zmatrix:0.1.0"
 ```
 
 It is also possible to get the latest snapshot from [Snapshot Artifacts][link-sonatypesnapshots] by adding the following
@@ -121,6 +116,15 @@ The `examples` package comtains runnable examples for `zmatrix`. Examples can be
 
 ```
 mill -i examples[_].run
+```
+
+## Building
+
+A local version of the library can be published by running those two commands:
+
+```
+mill __.publishM2Local
+mill __.publishLocal
 ```
 
 ## References
