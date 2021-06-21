@@ -10,16 +10,16 @@ package object zmatrix extends MatrixRequests {
   type MatrixEnv = ZEnv
     with Has[MatrixClient]
     with Has[MatrixConfiguration]
-    with Has[MatrixTokenConfiguration]
+    with Has[SyncTokenConfiguration]
     with Logging
   type AuthMatrixEnv = MatrixEnv with Has[Authentication]
 
   implicit class ExtendedZIOState[R, E](x: ZIO[R, E, SyncState]) {
 
-    def updateState[R1 <: R with Has[MatrixTokenConfiguration], E1 >: E]()
-      : ZIO[R1 with Has[MatrixTokenConfiguration], E1, SyncState] = x.tap[R1, E1] { syncState =>
-      MatrixTokenConfiguration.get.flatMap { config =>
-        MatrixTokenConfiguration.set(config.copy(since = Some(syncState.nextBatch)))
+    def updateState[R1 <: R with Has[SyncTokenConfiguration], E1 >: E]()
+      : ZIO[R1 with Has[SyncTokenConfiguration], E1, SyncState] = x.tap[R1, E1] { syncState =>
+      SyncTokenConfiguration.get.flatMap { config =>
+        SyncTokenConfiguration.set(config.copy(since = Some(syncState.nextBatch)))
       }
     }
 

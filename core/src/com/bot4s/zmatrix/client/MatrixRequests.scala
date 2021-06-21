@@ -36,7 +36,7 @@ trait MatrixRequests {
   def withSince(
     request: Request[MatrixResponse[Json], Any]
   ) = ZIO.accessM[AuthMatrixEnv] { env =>
-    val config = env.get[MatrixTokenConfiguration]
+    val config = env.get[SyncTokenConfiguration]
     config.get.map { config =>
       val uriWithParam = request.uri.addParam("since", config.since)
       request.copy[Identity, MatrixResponse[Json], Any](uri = uriWithParam)

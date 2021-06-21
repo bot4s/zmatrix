@@ -19,7 +19,7 @@ trait ExampleApp extends zio.App {
     .inject(
       ZEnv.live,
       Logger.live("matrix-zio-main"),
-      MatrixTokenConfiguration
+      SyncTokenConfiguration
         .persistent()
         .mapError(x => new Exception(s"Unable to read token configuration $x"))
         .orDie,

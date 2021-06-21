@@ -7,36 +7,36 @@ import pureconfig.error.ConfigReaderFailures
 import java.io.{ BufferedWriter, File, FileWriter }
 import com.typesafe.config.ConfigRenderOptions
 
-final case class MatrixToken(
+final case class SyncToken(
   since: Option[String] = None
 )
 
-trait MatrixTokenConfiguration {
-  def get: UIO[MatrixToken]
-  def set(config: MatrixToken): UIO[Unit]
+trait SyncTokenConfiguration {
+  def get: UIO[SyncToken]
+  def set(config: SyncToken): UIO[Unit]
 }
 
-object MatrixTokenConfiguration {
+object SyncTokenConfiguration {
   val DEFAULT_TOKEN_FILE = "token.conf"
 
-  def get: URIO[Has[MatrixTokenConfiguration], MatrixToken]               = ZIO.accessM(_.get.get)
-  def set(config: MatrixToken): URIO[Has[MatrixTokenConfiguration], Unit] = ZIO.accessM(_.get.set(config))
+  def get: URIO[Has[SyncTokenConfiguration], SyncToken]               = ZIO.accessM(_.get.get)
+  def set(config: SyncToken): URIO[Has[SyncTokenConfiguration], Unit] = ZIO.accessM(_.get.set(config))
 
-  private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[MatrixToken]] =
+  private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[SyncToken]] =
     ZIO
-      .fromEither(ConfigSource.file(filename).load[MatrixToken])
-      .orElse(ZIO.succeed(MatrixToken(None))) >>= Ref.make
+      .fromEither(ConfigSource.file(filename).load[SyncToken])
+      .orElse(ZIO.succeed(SyncToken(None))) >>= Ref.make
 
   /**
    * Create an in-memory configuration that is not persistent.
    * It's not recommended to use this layer as the token will not be persisted
    * between runs
    */
-  def live(filename: String = DEFAULT_TOKEN_FILE): Layer[ConfigReaderFailures, Has[MatrixTokenConfiguration]] =
+  def live(filename: String = DEFAULT_TOKEN_FILE): Layer[ConfigReaderFailures, Has[SyncTokenConfiguration]] =
     refFromFile(filename).map { tokenRef =>
-      new MatrixTokenConfiguration {
-        def get: UIO[MatrixToken]               = tokenRef.get
-        def set(config: MatrixToken): UIO[Unit] = tokenRef.set(config)
+      new SyncTokenConfiguration {
+        def get: UIO[SyncToken]               = tokenRef.get
+        def set(config: SyncToken): UIO[Unit] = tokenRef.set(config)
       }
     }.toLayer
 
@@ -44,13 +44,15 @@ object MatrixTokenConfiguration {
    * Create a persistent (on disk storage) configuration from the given file.
    * This layer, when updated, will write back its changes in the given configuration file
    */
-  def persistent(filename: String = DEFAULT_TOKEN_FILE): Layer[ConfigReaderFailures, Has[MatrixTokenConfiguration]] =
+  def persistent(
+    filename: String = DEFAULT_TOKEN_FILE
+  ): Layer[ConfigReaderFailures, Has[SyncTokenConfiguration]] =
     refFromFile(filename).map { configRef =>
-      new MatrixTokenConfiguration {
-        override def get: UIO[MatrixToken] = configRef.get
-        override def set(config: MatrixToken): UIO[Unit] = {
+      new SyncTokenConfiguration {
+        override def get: UIO[SyncToken] = configRef.get
+        override def set(config: SyncToken): UIO[Unit] = {
           val renderOptions = ConfigRenderOptions.concise().setFormatted(true).setJson(false)
-          val toWrite       = ConfigWriter[MatrixToken].to(config).render(renderOptions)
+          val toWrite       = ConfigWriter[SyncToken].to(config).render(renderOptions)
 
           val updateConf = for {
             file   <- ZIO.effect(new File(filename))
