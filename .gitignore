@@ -2,4 +2,4 @@ out/
 .bloop/
 .vscode/
 .metals/
-
+token.conf
