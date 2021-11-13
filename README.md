@@ -12,9 +12,9 @@ Add the following dependency to your project's build file
 
 ```scala
 // sbt
-"com.bot4s" %% "zmatrix" % "0.1.0"
+"com.bot4s" %% "zmatrix" % "0.1.1"
 // mill
-ivy"com.bot4s::zmatrix:0.1.0"
+ivy"com.bot4s::zmatrix:0.1.1"
 ```
 
 It is also possible to get the latest snapshot from [Snapshot Artifacts][link-sonatypesnapshots] by adding the following
