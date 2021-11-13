@@ -4,15 +4,15 @@ import publish._
 import mill.scalalib._
 
 object Versions {
-  val zioMagicVersion   = "0.2.3"
+  val zioMagicVersion   = "0.3.10"
   val zioLoggingVersion = "0.5.8"
-  val zioVersion        = "1.0.7"
-  val sttpVersion       = "3.2.3"
+  val zioVersion        = "1.0.12"
+  val sttpVersion       = "3.3.16"
   val circeVersion      = "0.13.0"
   val pureConfigVersion = "0.14.1"
 }
 
-val scalaVersions = List("2.12.13", "2.13.6")
+val scalaVersions = List("2.12.15", "2.13.7")
 
 trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
@@ -70,8 +70,7 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
       super.runMain("org.scalatest.run", args: _*)
     }
 
-    def testFrameworks =
-      Seq("zio.test.sbt.ZTestFramework")
+    def testFramework = "zio.test.sbt.ZTestFramework"
 
   }
 }
