@@ -9,7 +9,7 @@ object Versions {
   val zioVersion        = "1.0.12"
   val sttpVersion       = "3.3.16"
   val circeVersion      = "0.14.1"
-  val pureConfigVersion = "0.14.1"
+  val pureConfigVersion = "0.17.0"
 }
 
 val scalaVersions = List("2.12.15", "2.13.7")
