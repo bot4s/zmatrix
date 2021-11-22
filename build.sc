@@ -16,7 +16,7 @@ val scalaVersions = List("2.12.15", "2.13.7")
 
 trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
-  override def publishVersion = "0.1.1"
+  override def publishVersion = "0.1.2"
 
   override def pomSettings = PomSettings(
     description = "Matrix.org API client written using ZIO",
