@@ -15,9 +15,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Check code format
+        uses: jrouly/scalafmt-native-action@v1
+        with:
+          version: "3.3.0"
+          arguments: "-c .scalafmt.conf --test"
       - uses: jodersky/setup-mill@v0.2.3
         with:
-          mill-version: 0.9.10
+          mill-version: 0.9.11
       - name: Compile
         run: mill '__.compile'
       - name: Test
