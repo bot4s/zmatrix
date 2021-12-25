@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix.client
 
 import zio.logging._
-import sttp.client3.asynchttpclient.zio.{ SttpClient, send => sendRequest }
+import sttp.client3.asynchttpclient.zio.{ send => sendRequest, SttpClient }
 import sttp.client3.{ asBoth, asStringAlways, Request }
 import zio.{ Has, IO, URLayer, ZIO, ZLayer }
 import com.bot4s.zmatrix.MatrixError.{ NetworkError, SerializationError }
