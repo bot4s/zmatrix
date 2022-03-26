@@ -6,7 +6,7 @@ import zio.test.Assertion._
 import io.circe.Json
 import com.bot4s.zmatrix.models.{ Preset, RoomCreationData }
 
-object SerializationSpec extends DefaultRunnableSpec {
+object SerializationSpec extends ZIOSpecDefault {
 
   def spec = suite("Serialization")(
     test("Room Creation") {

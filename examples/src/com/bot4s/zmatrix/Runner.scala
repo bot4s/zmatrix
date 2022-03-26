@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix
 
 import zio.Console._
-import zio.{ ExitCode, ZEnv, ZIO }
+import zio.{ ExitCode, ZIO }
 import zio.Schedule
 import zio.ZIOAppArgs
 
@@ -13,7 +13,7 @@ object Runner extends zio.ZIOAppDefault {
     "CreateRoom" -> CreateRoom
   )
 
-  override def run: ZIO[Environment with ZEnv with ZIOAppArgs, Any, ExitCode] = {
+  override def run: ZIO[Environment with ZIOAppArgs, Any, ExitCode] = {
     val examplesStr = examples.keySet.mkString(start = "Available examples:\n\t", sep = "\n\t", end = "\n> ")
     (for {
       _     <- print(examplesStr)

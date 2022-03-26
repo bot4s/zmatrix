@@ -1,11 +1,12 @@
 package com.bot4s.zmatrix
 
-import zio.{ IO, Layer, Managed, Ref, UIO, URIO, ZIO }
+import zio.{ IO, Layer, Ref, UIO, URIO, ZIO }
 import pureconfig.{ ConfigSource, ConfigWriter }
 import pureconfig.generic.auto._
 import pureconfig.error.ConfigReaderFailures
 import java.io.{ BufferedWriter, File, FileWriter }
 import com.typesafe.config.ConfigRenderOptions
+import zio.ZLayer
 
 final case class SyncToken(
   since: Option[String] = None
@@ -34,12 +35,12 @@ object SyncTokenConfiguration {
    * between runs
    */
   def live(filename: String = DEFAULT_TOKEN_FILE): Layer[ConfigReaderFailures, SyncTokenConfiguration] =
-    refFromFile(filename).map { tokenRef =>
+    ZLayer.fromZIO(refFromFile(filename).map { tokenRef =>
       new SyncTokenConfiguration {
         def get: UIO[SyncToken]               = tokenRef.get
         def set(config: SyncToken): UIO[Unit] = tokenRef.set(config)
       }
-    }.toLayer
+    })
 
   /**
    * Create a persistent (on disk storage) configuration from the given file.
@@ -48,7 +49,7 @@ object SyncTokenConfiguration {
   def persistent(
     filename: String = DEFAULT_TOKEN_FILE
   ): Layer[ConfigReaderFailures, SyncTokenConfiguration] =
-    refFromFile(filename).map { configRef =>
+    ZLayer.fromZIO(refFromFile(filename).map { configRef =>
       new SyncTokenConfiguration {
         override def get: UIO[SyncToken] = configRef.get
         override def set(config: SyncToken): UIO[Unit] = {
@@ -57,16 +58,16 @@ object SyncTokenConfiguration {
 
           val updateConf = for {
             file <- ZIO.attempt(new File(filename))
-            managed = Managed.acquireReleaseWith(ZIO.attempt(new BufferedWriter(new FileWriter(file))))(bw =>
-                        IO.succeed(bw.close)
-                      )
-            _ <- configRef.set(config)
-            _ <- managed.use(c => IO.attempt(c.write(toWrite)))
+            _    <- configRef.set(config)
+            _ <-
+              ZIO.acquireReleaseWith(ZIO.attempt(new BufferedWriter(new FileWriter(file))))(bw =>
+                ZIO.succeed(bw.close)
+              )(c => ZIO.attempt(c.write(toWrite)))
           } yield ()
 
-          updateConf.catchAll(_ => IO.succeed(()))
+          updateConf.catchAll(_ => ZIO.succeed(()))
         }
       }
-    }.toLayer
+    })
 
 }

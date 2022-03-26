@@ -2,11 +2,11 @@ package com.bot4s
 
 import com.bot4s.zmatrix.client.{ MatrixClient, MatrixRequests }
 import com.bot4s.zmatrix.models._
-import zio.{ ZEnv, ZIO }
+import zio.ZIO
 import com.bot4s.zmatrix.services.Authentication
 
 package object zmatrix extends MatrixRequests {
-  type MatrixEnv     = ZEnv with MatrixClient with MatrixConfiguration with SyncTokenConfiguration
+  type MatrixEnv     = MatrixClient with MatrixConfiguration with SyncTokenConfiguration
   type AuthMatrixEnv = MatrixEnv with Authentication
 
   implicit class ExtendedZIOState[R, E](x: ZIO[R, E, SyncState]) {

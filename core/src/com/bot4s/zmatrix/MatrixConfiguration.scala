@@ -4,6 +4,7 @@ import zio.{ IO, Layer, Ref, UIO, URIO, ZIO }
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import pureconfig.error.ConfigReaderFailures
+import zio.ZLayer
 
 final case class Config(
   matrix: MatrixConfigurationContent
@@ -38,10 +39,10 @@ object MatrixConfiguration {
    * Create an in-memory configuration that is not persistent.
    */
   def live(filename: String = DEFAULT_CONFIG_FILE): Layer[ConfigReaderFailures, MatrixConfiguration] =
-    refFromFile(filename).map { configRef =>
+    ZLayer.fromZIO(refFromFile(filename).map { configRef =>
       new MatrixConfiguration {
         override def get: UIO[Config] = configRef.get
       }
-    }.toLayer
+    })
 
 }

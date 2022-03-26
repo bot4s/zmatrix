@@ -9,7 +9,7 @@ import com.bot4s.zmatrix.models.RoomEvent._
 object SimpleSync extends ExampleApp[Long] {
 
   override def runExample: ZIO[AuthMatrixEnv, MatrixError, Long] = {
-    lazy val method: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
+    val method: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
       sync.sync.tapInviteEvent {
         case (roomId, invite: InviteMemberEvent) if invite.content.membership == "invite" =>
           ZIO.logInfo(f"Joining $roomId") *> roomMembership.join(roomId)

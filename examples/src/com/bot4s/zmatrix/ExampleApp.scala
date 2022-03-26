@@ -12,7 +12,7 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
 
   def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
 
-  override def run: ZIO[ZEnv with Environment, Any, ExitCode] =
+  override def run: ZIO[Environment, Any, ExitCode] =
     runExample.catchSome { case ResponseError("M_MISSING_TOKEN", _, _) | ResponseError("M_UNKNOWN_TOKEN", _, _) =>
       for {
         _ <- ZIO.logError("Invalid or empty token provided, trying password authentication")
@@ -29,7 +29,6 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
       .retry(Schedule.forever)
       .exitCode
       .provide(
-        ZEnv.live,
         SyncTokenConfiguration
           .persistent()
           .mapError(x => new Exception(s"Unable to read token configuration $x"))
