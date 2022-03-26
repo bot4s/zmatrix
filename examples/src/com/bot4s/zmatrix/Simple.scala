@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix
 
 import com.bot4s.zmatrix.api.{ accounts, roomMembership }
-import zio.console._
+import zio.Console._
 import zio.{ ExitCode, URIO }
 
 object Simple extends ExampleApp {

@@ -1,6 +1,6 @@
 package com.bot4s.zmatrix
 
-import zio.{ Has, IO, Layer, Ref, UIO, URIO, ZIO }
+import zio.{ IO, Layer, Ref, UIO, URIO, ZIO }
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import pureconfig.error.ConfigReaderFailures
@@ -29,15 +29,15 @@ object MatrixConfiguration {
   val DEFAULT_API_PREFIX  = "/_matrix/client/r0"
   val DEFAULT_CONFIG_FILE = "bot.conf"
 
-  def get: URIO[Has[MatrixConfiguration], Config] = ZIO.accessM(_.get.get)
+  def get: URIO[MatrixConfiguration, Config] = ZIO.environmentWithZIO(_.get.get)
 
   private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[Config]] =
-    ZIO.fromEither(ConfigSource.resources(filename).load[Config]) >>= Ref.make
+    ZIO.fromEither(ConfigSource.resources(filename).load[Config]).flatMap(e => Ref.make(e))
 
   /**
    * Create an in-memory configuration that is not persistent.
    */
-  def live(filename: String = DEFAULT_CONFIG_FILE): Layer[ConfigReaderFailures, Has[MatrixConfiguration]] =
+  def live(filename: String = DEFAULT_CONFIG_FILE): Layer[ConfigReaderFailures, MatrixConfiguration] =
     refFromFile(filename).map { configRef =>
       new MatrixConfiguration {
         override def get: UIO[Config] = configRef.get

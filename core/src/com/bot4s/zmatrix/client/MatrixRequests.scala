@@ -9,7 +9,7 @@ import sttp.client3._
 import com.bot4s.zmatrix._
 import com.bot4s.zmatrix.MatrixConfiguration
 import com.bot4s.zmatrix.MatrixError.ResponseError
-import zio.{ Has, URIO, ZIO }
+import zio.{ URIO, ZIO }
 
 /**
  * This trait provides all the helper methods related to the queries that must
@@ -19,7 +19,7 @@ import zio.{ Has, URIO, ZIO }
 trait MatrixRequests {
   type MatrixResponseError = ResponseException[ResponseError, Error]
   type MatrixResponse[T]   = Either[MatrixResponseError, T]
-  type MatrixAction        = URIO[Has[MatrixConfiguration], Request[MatrixResponse[Json], Any]]
+  type MatrixAction        = URIO[MatrixConfiguration, Request[MatrixResponse[Json], Any]]
 
   def get(path: Seq[String]): MatrixAction =
     requestWithPath(Method.GET, path).map(_.response(asJsonEither[ResponseError, Json]))
@@ -35,7 +35,7 @@ trait MatrixRequests {
 
   def withSince(
     request: Request[MatrixResponse[Json], Any]
-  ) = ZIO.accessM[AuthMatrixEnv] { env =>
+  ) = ZIO.environmentWithZIO[AuthMatrixEnv] { env =>
     val config = env.get[SyncTokenConfiguration]
     config.get.map { config =>
       val uriWithParam = request.uri.addParam("since", config.since)
@@ -49,7 +49,7 @@ trait MatrixRequests {
    */
 
   private def requestWithPath(method: Method, path: Seq[String]) =
-    ZIO.accessM[Has[MatrixConfiguration]] { config =>
+    ZIO.environmentWithZIO[MatrixConfiguration] { config =>
       config.get.get.map { config =>
         basicRequest
           .method(method, uri"${config.matrix.apiPath}/$path")

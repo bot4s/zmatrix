@@ -6,7 +6,7 @@ import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 
 trait Account {
   def whoAmI: ZIO[AuthMatrixEnv, MatrixError, UserResponse] =
-    (get(Seq("account", "whoami")) >>= authenticate >>= send) >>= as[UserResponse]
+    sendWithAuth[UserResponse](get(Seq("account", "whoami")))
 }
 
 object accounts extends Account

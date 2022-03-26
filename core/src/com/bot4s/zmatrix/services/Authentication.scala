@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix.services
 
 import com.bot4s.zmatrix._
-import zio.{ Has, IO, Ref, UIO, URIO, ZIO }
+import zio.{ IO, Ref, UIO, URIO, ZIO }
 import com.bot4s.zmatrix.models.AccessToken
 import com.bot4s.zmatrix.api.login
 import com.bot4s.zmatrix.MatrixError
@@ -17,8 +17,8 @@ trait Authentication {
 
 object Authentication {
 
-  def accessToken: URIO[Has[Authentication], AccessToken]         = ZIO.accessM(_.get.accessToken)
-  def refresh: ZIO[Has[Authentication], MatrixError, AccessToken] = ZIO.accessM(_.get.refresh)
+  def accessToken: URIO[Authentication, AccessToken]         = ZIO.environmentWithZIO(_.get.accessToken)
+  def refresh: ZIO[Authentication, MatrixError, AccessToken] = ZIO.environmentWithZIO(_.get.refresh)
 
   /**
    * Default implementation for the Authentiction service, it will use the  MATRIX_BOT_ACCESS and MATRIX_BOT_PASSWORD
@@ -27,7 +27,7 @@ object Authentication {
    * it is not a good idea to create a new access token at each restart, it should be store somewhere safe between runs.
    */
   val live = ZIO
-    .accessM[MatrixEnv] { env =>
+    .environmentWithZIO[MatrixEnv] { env =>
       env.get[MatrixConfiguration].get.flatMap { config =>
         Ref.make(AccessToken(sys.env.getOrElse("MATRIX_BOT_ACCESS", ""))).map { tokenRef =>
           new Authentication {
@@ -43,7 +43,7 @@ object Authentication {
                       deviceId = config.matrix.deviceId
                     )
                     .flatMap(response => tokenRef.updateAndGet(_ => response.accessToken))
-                    .provide(env)
+                    .provideEnvironment(env)
                 case (Some(_), _) =>
                   IO.fail(
                     MatrixError.InvalidParameterError("password", "Missing password, please set MATRIX_BOT_PASSWORD")

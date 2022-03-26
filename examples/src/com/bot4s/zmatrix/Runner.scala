@@ -1,6 +1,6 @@
 package com.bot4s.zmatrix
 
-import zio.console._
+import zio.Console._
 import zio.{ ExitCode, URIO, ZEnv, ZIO }
 
 object Runner extends zio.App {

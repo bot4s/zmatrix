@@ -8,7 +8,7 @@ import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 trait Sync {
 
   def sync: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
-    (get(Seq("sync")) >>= withSince >>= authenticate >>= send) >>= as[SyncState]
+    sendWithAuth[SyncState](get(Seq("sync")))
 
 }
 

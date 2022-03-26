@@ -4,9 +4,8 @@ import publish._
 import mill.scalalib._
 
 object Versions {
-  val zioMagicVersion   = "0.3.11"
-  val zioLoggingVersion = "0.5.14"
-  val zioVersion        = "1.0.13"
+  val zioLoggingVersion = "2.0.0-RC5"
+  val zioVersion        = "2.0.0-RC2"
   val sttpVersion       = "3.5.1"
   val circeVersion      = "0.14.1"
   val pureConfigVersion = "0.17.1"
@@ -38,7 +37,6 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
-    ivy"io.github.kitlangton::zio-magic:${zioMagicVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
@@ -66,8 +64,8 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
       ivy"dev.zio::zio-test-sbt:${zioVersion}"
     )
 
-    def testOne(args: String*) = T.command {
-      super.runMain("org.scalatest.run", args: _*)
+    def testOne(spec: String, args: String*) = T.command {
+      super.runMain(spec, args: _*)
     }
 
     def testFramework = "zio.test.sbt.ZTestFramework"
