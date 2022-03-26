@@ -22,8 +22,8 @@ object Runner extends zio.ZIOAppDefault {
                    .fromOption(examples.get(input))
                    .mapError(_ => new Exception(s"Example '$input' does not exist"))
                    .tapError(e => printLineError(e.getMessage()))
-      runnable <- example.run(List())
-    } yield runnable).retry(Schedule.forever).orDie
+      runnable <- example.run
+    } yield runnable).retry(Schedule.forever)
   }
 
 }

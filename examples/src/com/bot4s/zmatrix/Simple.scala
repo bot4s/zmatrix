@@ -6,7 +6,7 @@ import com.bot4s.zmatrix.api.{ accounts, roomMembership }
 
 object Simple extends ExampleApp[Unit] {
 
-  override def runExample(args: List[String]): ZIO[AuthMatrixEnv, MatrixError, Unit] =
+  override def runExample: ZIO[AuthMatrixEnv, MatrixError, Unit] =
     (accounts.whoAmI *> roomMembership.joinedRooms())
       .tapError(e => printLineError(e.toString()))
       .flatMap(x => printLine(x.toString()))

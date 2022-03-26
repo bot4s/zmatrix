@@ -7,7 +7,7 @@ import com.bot4s.zmatrix.models.{ EventType, Preset, RoomCreationData, Visibilit
 
 object CreateRoom extends ExampleApp[ExitCode] {
 
-  override def runExample(args: List[String]): URIO[AuthMatrixEnv, ExitCode] =
+  override def runExample: URIO[AuthMatrixEnv, ExitCode] =
     roomCreation
       .createRoom(
         RoomCreationData(
