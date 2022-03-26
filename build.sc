@@ -7,12 +7,12 @@ object Versions {
   val zioMagicVersion   = "0.3.11"
   val zioLoggingVersion = "0.5.14"
   val zioVersion        = "1.0.13"
-  val sttpVersion       = "3.3.18"
+  val sttpVersion       = "3.5.1"
   val circeVersion      = "0.14.1"
   val pureConfigVersion = "0.17.1"
 }
 
-val scalaVersions = List("2.12.15", "2.13.7")
+val scalaVersions = List("2.12.15", "2.13.8")
 
 trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
@@ -42,7 +42,7 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio:${sttpVersion}",
+    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio1:${sttpVersion}",
     ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
     ivy"io.circe::circe-generic:${circeVersion}",
     ivy"io.circe::circe-generic-extras:${circeVersion}"
