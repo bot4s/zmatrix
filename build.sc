@@ -76,6 +76,17 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
 object examples extends Cross[ExamplesModule](scalaVersions: _*)
 class ExamplesModule(val crossScalaVersion: String) extends CrossScalaModule {
   val moduleDeps = Seq(core(crossScalaVersion))
+  override def scalacOptions = Seq(
+    "-unchecked",
+    "-deprecation",
+    "-language:_",
+    "-Ywarn-unused",
+    "-encoding",
+    "UTF-8",
+    "-feature",
+    "-unchecked",
+    "-Ywarn-dead-code"
+  )
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }
