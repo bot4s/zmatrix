@@ -4,7 +4,7 @@ import publish._
 import mill.scalalib._
 
 object Versions {
-  val zioMagicVersion   = "0.3.11"
+  val zioMagicVersion   = "0.3.12"
   val zioLoggingVersion = "0.5.14"
   val zioVersion        = "1.0.14"
   val sttpVersion       = "3.5.1"
