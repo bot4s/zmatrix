@@ -8,7 +8,7 @@ object Versions {
   val zioLoggingVersion = "0.5.14"
   val zioVersion        = "1.0.14"
   val sttpVersion       = "3.6.1"
-  val circeVersion      = "0.14.1"
+  val circeVersion      = "0.14.2"
   val pureConfigVersion = "0.17.1"
 }
 
