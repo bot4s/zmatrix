@@ -4,10 +4,12 @@ import publish._
 import mill.scalalib._
 
 object Versions {
+  val zioMagicVersion   = "0.3.12"
   val zioLoggingVersion = "2.0.0-RC5"
+  val sttpVersion       = "3.6.2"
   val zioVersion        = "2.0.0-RC2"
-  val sttpVersion       = "3.5.1"
-  val circeVersion      = "0.14.1"
+  val sttpVersion       = "3.6.2"
+  val circeVersion      = "0.14.2"
   val pureConfigVersion = "0.17.1"
 }
 
