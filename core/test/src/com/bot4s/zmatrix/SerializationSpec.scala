@@ -3,11 +3,11 @@ package com.bot4s.zmatrix
 import zio.test._
 import io.circe.syntax._
 import zio.test.Assertion._
-import zio.test.DefaultRunnableSpec
-import com.bot4s.zmatrix.models.{ Preset, RoomCreationData }
 import io.circe.Json
+import com.bot4s.zmatrix.models.{ Preset, RoomCreationData }
 
-object SerializationSpec extends DefaultRunnableSpec {
+object SerializationSpec extends ZIOSpecDefault {
+
   def spec = suite("Serialization")(
     test("Room Creation") {
       val json = RoomCreationData(

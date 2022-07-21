@@ -13,9 +13,7 @@ trait RoomCreation {
    * Documentation: https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-createroom
    */
   def createRoom(roomCreation: RoomCreationData): ZIO[AuthMatrixEnv, MatrixError, RoomId] =
-    (postJson(Seq("createRoom"), roomCreation.asJson.dropNullValues) >>= authenticate >>= send).flatMap(json =>
-      as(json)(_.downField("room_id").as[RoomId])
-    )
+    sendWithAuth(postJson(Seq("createRoom"), roomCreation.asJson.dropNullValues))(_.downField("room_id").as[RoomId])
 
 }
 

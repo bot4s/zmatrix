@@ -39,6 +39,6 @@ final case class RoomCreationData(
 object RoomCreationData {
   implicit val customConfig: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val fooEncoder: Encoder[RoomCreationData] = deriveConfiguredEncoder
-  implicit val fooDecoder: Decoder[RoomCreationData] = deriveConfiguredDecoder
+  implicit val roomCreationDataEncoder: Encoder[RoomCreationData] = deriveConfiguredEncoder
+  implicit val roomCreationDataDecoder: Decoder[RoomCreationData] = deriveConfiguredDecoder
 }

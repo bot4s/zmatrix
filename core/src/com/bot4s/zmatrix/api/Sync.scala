@@ -8,7 +8,13 @@ import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 trait Sync {
 
   def sync: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
-    (get(Seq("sync")) >>= withSince >>= authenticate >>= send) >>= as[SyncState]
+    for {
+      request <- get(Seq("sync"))
+      request <- withSince(request)
+      request <- authenticate(request)
+      result  <- send(request)
+      decoded <- as[SyncState](result)
+    } yield decoded
 
 }
 
