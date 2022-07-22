@@ -11,7 +11,7 @@ trait DeviceManagement {
    * Documentation: https://matrix.org/docs/spec/client_server/latest#get-matrix-client-r0-devices
    */
   def getDevices(): ZIO[AuthMatrixEnv, MatrixError, List[Device]] =
-    (get(Seq("devices")) >>= authenticate >>= send).flatMap(json => as(json)(_.downField("devices").as[List[Device]]))
+    sendWithAuth(get(Seq("devices")))(_.downField("devices").as[List[Device]])
 }
 
 object devices extends DeviceManagement;

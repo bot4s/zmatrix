@@ -1,19 +1,13 @@
 package com.bot4s.zmatrix
 
-import com.bot4s.zmatrix.api.{ accounts, roomCreation, roomMembership, rooms }
-import zio.console._
-import zio.{ ExitCode, URIO }
-import com.bot4s.zmatrix.models.RoomCreationData
-import com.bot4s.zmatrix.models.Preset
-import com.bot4s.zmatrix.models.Visibility
-import com.bot4s.zmatrix.models.RoomId
-import com.bot4s.zmatrix.models.EventType
-import zio.logging.log
 import zio._
+import zio.Console._
+import com.bot4s.zmatrix.api.{ roomCreation, rooms }
+import com.bot4s.zmatrix.models.{ EventType, Preset, RoomCreationData, Visibility }
 
-object CreateRoom extends ExampleApp {
+object CreateRoom extends ExampleApp[ExitCode] {
 
-  override def runExample(args: List[String]): URIO[AuthMatrixEnv, ExitCode] =
+  override def runExample: URIO[AuthMatrixEnv, ExitCode] =
     roomCreation
       .createRoom(
         RoomCreationData(
@@ -26,12 +20,12 @@ object CreateRoom extends ExampleApp {
         )
       )
       .flatMap { roomId =>
-        log.info(s"Created room with id $roomId") *>
+        ZIO.logInfo(s"Created room with id $roomId") *>
           // roomMembership.invite(roomId, "@exampleUser:matrix.org") *>
           rooms.sendMsg(roomId, EventType.roomMessages, "Welcome to my room")
       }
-      .tapError(e => putStrLn(e.toString()))
-      .flatMap(x => putStrLn(x.toString()))
+      .tapError(e => printLineError(e.toString()))
+      .flatMap(x => printLine(x.toString()))
       .exitCode
 
 }

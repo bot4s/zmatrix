@@ -1,15 +1,15 @@
 package com.bot4s.zmatrix
 
+import zio._
+import zio.Console._
 import com.bot4s.zmatrix.api.{ accounts, roomMembership }
-import zio.console._
-import zio.{ ExitCode, URIO }
 
-object Simple extends ExampleApp {
+object Simple extends ExampleApp[Unit] {
 
-  override def runExample(args: List[String]): URIO[AuthMatrixEnv, ExitCode] =
-    (accounts.whoAmI <*> roomMembership.joinedRooms())
-      .tapError(e => putStrLn(e.toString()))
-      .flatMap(x => putStrLn(x.toString()))
-      .exitCode
+  override def runExample: ZIO[AuthMatrixEnv, MatrixError, Unit] =
+    (accounts.whoAmI *> roomMembership.joinedRooms())
+      .tapError(e => printLineError(e.toString()))
+      .flatMap(x => printLine(x.toString()))
+      .refineOrDie { case x: MatrixError => x }
 
 }

@@ -4,19 +4,18 @@ import publish._
 import mill.scalalib._
 
 object Versions {
-  val zioMagicVersion   = "0.3.12"
-  val zioLoggingVersion = "0.5.14"
-  val zioVersion        = "1.0.14"
-  val sttpVersion       = "3.6.1"
-  val circeVersion      = "0.14.1"
+  val zioLoggingVersion = "2.0.1"
+  val zioVersion        = "2.0.0"
+  val sttpVersion       = "3.7.1"
+  val circeVersion      = "0.14.2"
   val pureConfigVersion = "0.17.1"
 }
 
-val scalaVersions = List("2.12.15", "2.13.8")
+val scalaVersions = List("2.12.16", "2.13.8")
 
 trait Publishable extends PublishModule {
   override def artifactName   = s"zmatrix"
-  override def publishVersion = "0.1.2"
+  override def publishVersion = "0.2.0"
 
   override def pomSettings = PomSettings(
     description = "Matrix.org API client written using ZIO",
@@ -38,14 +37,15 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
-    ivy"io.github.kitlangton::zio-magic:${zioMagicVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio1:${sttpVersion}",
+    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio:${sttpVersion}",
     ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
     ivy"io.circe::circe-generic:${circeVersion}",
-    ivy"io.circe::circe-generic-extras:${circeVersion}"
+    ivy"io.circe::circe-generic-extras:${circeVersion}",
+    // https://github.com/com-lihaoyi/mill/issues/1797
+    ivy"org.scala-lang:scala-reflect:${crossScalaVersion}"
   )
 
   override def scalacOptions = Seq(
@@ -66,8 +66,8 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
       ivy"dev.zio::zio-test-sbt:${zioVersion}"
     )
 
-    def testOne(args: String*) = T.command {
-      super.runMain("org.scalatest.run", args: _*)
+    def testOne(spec: String, args: String*) = T.command {
+      super.runMain(spec, args: _*)
     }
 
     def testFramework = "zio.test.sbt.ZTestFramework"
@@ -78,6 +78,17 @@ class CoreModule(val crossScalaVersion: String) extends CrossScalaModule with Pu
 object examples extends Cross[ExamplesModule](scalaVersions: _*)
 class ExamplesModule(val crossScalaVersion: String) extends CrossScalaModule {
   val moduleDeps = Seq(core(crossScalaVersion))
+  override def scalacOptions = Seq(
+    "-unchecked",
+    "-deprecation",
+    "-language:_",
+    "-Ywarn-unused",
+    "-encoding",
+    "UTF-8",
+    "-feature",
+    "-unchecked",
+    "-Ywarn-dead-code"
+  )
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }

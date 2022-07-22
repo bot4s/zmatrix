@@ -11,14 +11,14 @@ trait SessionManagement {
    * Documentation: https://matrix.org/docs/spec/client_server/latest#post-matrix-client-r0-logout
    */
   def logout(): ZIO[AuthMatrixEnv, MatrixError, Unit] =
-    post(Seq("logout")) >>= authenticate >>= send >>= as[Unit]
+    sendWithAuth[Unit](post(Seq("logout")))
 
   /*
    * Delete all existing tokens for the user. The current token will be invalidated
    * Documentation: https://matrix.org/docs/spec/client_server/latest#post-matrix-client-r0-logout-all
    */
   def logoutAll(): ZIO[AuthMatrixEnv, MatrixError, Unit] =
-    post(Seq("logout", "all")) >>= authenticate >>= send >>= as[Unit]
+    sendWithAuth[Unit](post(Seq("logout", "all")))
 }
 
 object sessions extends SessionManagement

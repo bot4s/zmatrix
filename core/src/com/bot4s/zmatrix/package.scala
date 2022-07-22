@@ -2,22 +2,17 @@ package com.bot4s
 
 import com.bot4s.zmatrix.client.{ MatrixClient, MatrixRequests }
 import com.bot4s.zmatrix.models._
-import zio.{ Has, ZEnv, ZIO }
-import zio.logging._
+import zio.ZIO
 import com.bot4s.zmatrix.services.Authentication
 
 package object zmatrix extends MatrixRequests {
-  type MatrixEnv = ZEnv
-    with Has[MatrixClient]
-    with Has[MatrixConfiguration]
-    with Has[SyncTokenConfiguration]
-    with Logging
-  type AuthMatrixEnv = MatrixEnv with Has[Authentication]
+  type MatrixEnv     = MatrixClient with MatrixConfiguration with SyncTokenConfiguration
+  type AuthMatrixEnv = MatrixEnv with Authentication
 
   implicit class ExtendedZIOState[R, E](x: ZIO[R, E, SyncState]) {
 
-    def updateState[R1 <: R with Has[SyncTokenConfiguration], E1 >: E]()
-      : ZIO[R1 with Has[SyncTokenConfiguration], E1, SyncState] = x.tap[R1, E1] { syncState =>
+    def updateState[R1 <: R with SyncTokenConfiguration, E1 >: E]()
+      : ZIO[R1 with SyncTokenConfiguration, E1, SyncState] = x.tap[R1, E1] { syncState =>
       SyncTokenConfiguration.get.flatMap { config =>
         SyncTokenConfiguration.set(config.copy(since = Some(syncState.nextBatch)))
       }

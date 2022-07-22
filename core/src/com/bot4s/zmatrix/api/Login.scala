@@ -22,8 +22,7 @@ trait Login {
       )
       .deepDropNullValues
 
-    val request = postJson(Seq("login"), json)
-    (request >>= send) >>= as[LoginResponse]
+    send[LoginResponse](postJson(Seq("login"), json))
   }
 
   def tokenLogin(
@@ -36,8 +35,7 @@ trait Login {
       "device_id" -> deviceId.map(Json.fromString(_)).getOrElse(Json.Null)
     )
 
-    val request = postJson(Seq("login"), json)
-    (request >>= send) >>= as[LoginResponse]
+    send[LoginResponse](postJson(Seq("login"), json))
   }
 
 }

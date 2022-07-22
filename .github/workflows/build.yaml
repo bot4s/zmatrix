@@ -22,7 +22,7 @@ jobs:
           arguments: "-c .scalafmt.conf --test"
       - uses: jodersky/setup-mill@v0.2.3
         with:
-          mill-version: 0.10.2
+          mill-version: 0.10.5
       - name: Compile
         run: mill '__.compile'
       - name: Test
