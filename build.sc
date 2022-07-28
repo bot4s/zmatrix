@@ -6,7 +6,7 @@ import mill.scalalib._
 object Versions {
   val zioLoggingVersion = "2.0.1"
   val zioVersion        = "2.0.0"
-  val sttpVersion       = "3.7.1"
+  val sttpVersion       = "3.7.2"
   val circeVersion      = "0.14.2"
   val pureConfigVersion = "0.17.1"
 }
