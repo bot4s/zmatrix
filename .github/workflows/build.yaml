@@ -18,7 +18,7 @@ jobs:
       - name: Check code format
         uses: jrouly/scalafmt-native-action@v1
         with:
-          version: "3.3.0"
+          version: "3.3.3"
           arguments: "-c .scalafmt.conf --test"
       - uses: jodersky/setup-mill@v0.2.3
         with:
