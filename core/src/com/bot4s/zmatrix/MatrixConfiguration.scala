@@ -12,11 +12,13 @@ final case class Config(
 final case class MatrixConfigurationContent(
   homeServer: String,
   apiPrefix: String = MatrixConfiguration.DEFAULT_API_PREFIX,
+  apiVersion: String = MatrixConfiguration.DEFAULT_API_VERSION,
   userId: Option[String] = None,
   deviceName: Option[String] = None,
   deviceId: Option[String] = None
 ) {
-  val apiPath = f"${homeServer}${apiPrefix}"
+  val clientApi = f"${homeServer}${apiPrefix}/client/${apiVersion}"
+  val mediaApi  = f"${homeServer}${apiPrefix}/media/${apiVersion}"
 }
 
 /**
@@ -27,7 +29,8 @@ trait MatrixConfiguration {
 
 object MatrixConfiguration {
 
-  val DEFAULT_API_PREFIX  = "/_matrix/client/r0"
+  val DEFAULT_API_PREFIX  = "/_matrix"
+  val DEFAULT_API_VERSION = "v3"
   val DEFAULT_CONFIG_FILE = "bot.conf"
 
   def get: URIO[MatrixConfiguration, Config] = ZIO.environmentWithZIO(_.get.get)

@@ -12,9 +12,7 @@ import sttp.client3._
  * The underlying errors must be wrapped into a subtype of MatrixError
  */
 trait MatrixClient {
-  def send[T](
-    request: Request[MatrixResponse[T], Any]
-  ): IO[MatrixError, T]
+  def send[T](request: Request[MatrixResponse[T], Any]): IO[MatrixError, T]
 }
 
 object MatrixClient {

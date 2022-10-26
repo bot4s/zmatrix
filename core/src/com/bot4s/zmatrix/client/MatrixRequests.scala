@@ -3,11 +3,11 @@ package com.bot4s.zmatrix.client
 import zio.{ URIO, ZIO }
 
 import com.bot4s.zmatrix.MatrixError.ResponseError
-import com.bot4s.zmatrix.{MatrixConfiguration, _}
+import com.bot4s.zmatrix.{ MatrixConfiguration, _ }
 import io.circe.{ Error, Json }
 import sttp.client3.circe._
-import sttp.client3.{ResponseException, _}
-import sttp.model.Method
+import sttp.client3.{ ResponseException, _ }
+import sttp.model.{ MediaType, Method }
 
 /**
  * This trait provides all the helper methods related to the queries that must
@@ -31,6 +31,22 @@ trait MatrixRequests {
   def post(path: Seq[String]): MatrixAction =
     postJson(path, Json.obj())
 
+  /*
+    This method is a bit specific as it is only for `media` file
+    this might need a refactor in the future, but as of now,
+    it can not be used to send another file
+   */
+  def postMediaFile(path: Seq[String], content: Array[Byte], contentType: MediaType): MatrixAction =
+    ZIO.serviceWithZIO[MatrixConfiguration] { config =>
+      config.get.map { config =>
+        basicRequest
+          .method(Method.POST, uri"${config.matrix.mediaApi}/$path")
+          .body(content)
+          .contentType(contentType)
+          .response(asJsonEither[ResponseError, Json])
+      }
+    }
+
   def withSince(
     request: Request[MatrixResponse[Json], Any]
   ): URIO[AuthMatrixEnv, Request[MatrixResponse[Json], Any]] = ZIO.environmentWithZIO[AuthMatrixEnv] { env =>
@@ -47,10 +63,10 @@ trait MatrixRequests {
    */
 
   private def requestWithPath(method: Method, path: Seq[String]) =
-    ZIO.environmentWithZIO[MatrixConfiguration] { config =>
-      config.get.get.map { config =>
+    ZIO.serviceWithZIO[MatrixConfiguration] { config =>
+      config.get.map { config =>
         basicRequest
-          .method(method, uri"${config.matrix.apiPath}/$path")
+          .method(method, uri"${config.matrix.clientApi}/$path")
       }
     }
 

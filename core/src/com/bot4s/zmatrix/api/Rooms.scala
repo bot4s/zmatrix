@@ -2,9 +2,9 @@ package com.bot4s.zmatrix.api
 
 import java.util.UUID
 
+import com.bot4s.zmatrix.models.RoomMessageType._
 import com.bot4s.zmatrix.models.responses.EventResponse
 import com.bot4s.zmatrix.models.{ EventType, RoomId, RoomMessageType }
-import com.bot4s.zmatrix.models.RoomMessageType._
 import io.circe.syntax._
 
 trait Rooms {
