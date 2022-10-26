@@ -17,12 +17,12 @@ import RoomMessageType._
 sealed trait RoomEvent
 
 // m.room.message event
-final case class RoomMessage(sender: String, eventId: String, content: RoomMessageType) extends RoomEvent {
+final case class MessageEvent(sender: String, eventId: String, content: RoomMessageType) extends RoomEvent {
   val `type`: String = "m.room.message"
 }
 
 // m.room.topic event
-final case class TopicMessage(sender: String, eventId: String, content: TopicMessageContent) extends RoomEvent {
+final case class TopicEvent(sender: String, eventId: String, content: TopicMessageContent) extends RoomEvent {
   val `type`: String = "m.room.topic"
 }
 final case class TopicMessageContent(topic: String)
@@ -33,16 +33,16 @@ object RoomEvent {
     content: Json
   ) extends RoomEvent
 
-  implicit val roomMessageDecoder: Decoder[RoomMessage]                 = deriveConfiguredDecoder
-  implicit val topicMessageDecoder: Decoder[TopicMessage]               = deriveConfiguredDecoder
+  implicit val roomMessageDecoder: Decoder[MessageEvent]                = deriveConfiguredDecoder
+  implicit val topicMessageDecoder: Decoder[TopicEvent]                 = deriveConfiguredDecoder
   implicit val topicMessageContentDecoder: Decoder[TopicMessageContent] = deriveConfiguredDecoder
 
   /* Those decoder are used by the sync state */
   implicit val roomEventDecoder: Decoder[RoomEvent] = c =>
     c.downField("type").as[String].flatMap { label =>
       label match {
-        case "m.room.message" => c.as[RoomMessage]
-        case "m.room.topic"   => c.as[TopicMessage]
+        case "m.room.message" => c.as[MessageEvent]
+        case "m.room.topic"   => c.as[TopicEvent]
         case "m.room.member"  => Right(UnknownEvent(label, c.value)) // another kind of room message, as a placeholder
         case _                => Right(UnknownEvent(label, c.value))
       }

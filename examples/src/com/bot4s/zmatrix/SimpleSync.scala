@@ -16,10 +16,10 @@ object SimpleSync extends ExampleApp[Long] {
         case (roomId, invite: InviteMemberEvent) if invite.content.membership == "invite" =>
           ZIO.logInfo(f"Joining $roomId") *> roomMembership.join(roomId)
       }.tapRoomEvent {
-        case (roomId, TopicMessage(sender, _, TopicMessageContent(topic))) =>
+        case (roomId, TopicEvent(sender, _, TopicMessageContent(topic))) =>
           rooms.sendMsg(roomId, s"Thanks $sender for setting the topic to '${topic}'")
 
-        case (roomId, RoomMessage(sender, _, content: RoomMessageTextContent)) =>
+        case (roomId, MessageEvent(sender, _, content: RoomMessageTextContent)) =>
           val notFromBot =
             MatrixConfiguration.get.map(!_.matrix.userId.exists(botName => sender.startsWith(s"@$botName")))
           ZIO.whenZIO(notFromBot)(
@@ -27,7 +27,7 @@ object SimpleSync extends ExampleApp[Long] {
               rooms.sendMsg(roomId, "welcome back")
           )
 
-        case (roomId, RoomMessage(sender, _, content: RoomMessageImageContent)) =>
+        case (roomId, MessageEvent(sender, _, content: RoomMessageImageContent)) =>
           val notFromBot =
             MatrixConfiguration.get.map(!_.matrix.userId.exists(botName => sender.startsWith(s"@$botName")))
           ZIO.whenZIO(notFromBot)(

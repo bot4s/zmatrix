@@ -4,7 +4,7 @@ import zio.test.Assertion._
 import zio.test._
 
 import com.bot4s.zmatrix.models.RoomMessageType._
-import com.bot4s.zmatrix.models.{ Preset, RoomCreationData, RoomEvent, RoomMessage, RoomMessageType }
+import com.bot4s.zmatrix.models.{ Preset, RoomCreationData, RoomEvent, MessageEvent, RoomMessageType }
 import io.circe.Json
 import io.circe.parser.decode
 import io.circe.syntax._
@@ -66,7 +66,7 @@ object SerializationSpec extends ZIOSpecDefault {
       assert(res.toOption)(
         isSome(
           equalTo(
-            RoomMessage(
+            MessageEvent(
               sender = "@bot:matrix.org",
               eventId = "$5w9tsY4TSSgW_sTVeyt1MlpgW0N_XuTvNntK111-JmI",
               content = RoomMessageTextContent("success")
