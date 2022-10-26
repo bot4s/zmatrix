@@ -1,10 +1,10 @@
 package com.bot4s.zmatrix
 
-import zio.{ IO, Layer, Ref, UIO, URIO, ZIO }
+import zio._
+
 import pureconfig.ConfigSource
-import pureconfig.generic.auto._
 import pureconfig.error.ConfigReaderFailures
-import zio.ZLayer
+import pureconfig.generic.auto._
 
 final case class Config(
   matrix: MatrixConfigurationContent

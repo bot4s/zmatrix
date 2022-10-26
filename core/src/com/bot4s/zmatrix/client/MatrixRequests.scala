@@ -1,15 +1,13 @@
 package com.bot4s.zmatrix.client
 
-import sttp.client3.ResponseException
+import zio.{ URIO, ZIO }
 
+import com.bot4s.zmatrix.MatrixError.ResponseError
+import com.bot4s.zmatrix.{MatrixConfiguration, _}
 import io.circe.{ Error, Json }
 import sttp.client3.circe._
+import sttp.client3.{ResponseException, _}
 import sttp.model.Method
-import sttp.client3._
-import com.bot4s.zmatrix._
-import com.bot4s.zmatrix.MatrixConfiguration
-import com.bot4s.zmatrix.MatrixError.ResponseError
-import zio.{ URIO, ZIO }
 
 /**
  * This trait provides all the helper methods related to the queries that must

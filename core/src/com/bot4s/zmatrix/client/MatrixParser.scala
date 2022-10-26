@@ -1,8 +1,9 @@
 package com.bot4s.zmatrix.client
 
 import zio.{ IO, ZIO }
-import io.circe.{ Decoder, Json }
+
 import com.bot4s.zmatrix.MatrixError._
+import io.circe.{ Decoder, Json }
 
 trait MatrixParser {
   def as[T](json: Json)(implicit decoder: Decoder[T]): IO[SerializationError, T] =

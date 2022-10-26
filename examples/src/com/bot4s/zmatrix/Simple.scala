@@ -1,15 +1,15 @@
 package com.bot4s.zmatrix
 
-import zio._
 import zio.Console._
 import com.bot4s.zmatrix.api.{ accounts, roomMembership }
 
 object Simple extends ExampleApp[Unit] {
 
-  override def runExample: ZIO[AuthMatrixEnv, MatrixError, Unit] =
+  val runExample =
     (accounts.whoAmI *> roomMembership.joinedRooms())
       .tapError(e => printLineError(e.toString()))
-      .flatMap(x => printLine(x.toString()))
+      .flatMap(x => printLine(f"I'm a member of all those rooms: ${x.toString()}"))
+      .unit
       .refineOrDie { case x: MatrixError => x }
 
 }

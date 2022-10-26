@@ -1,12 +1,11 @@
 package com.bot4s.zmatrix
 
-import zio._
-import com.bot4s.zmatrix.client.MatrixClient
-import com.bot4s.zmatrix.MatrixError.{ NetworkError, ResponseError }
+import zio.{Schedule, _}
 
-import sttp.client3.asynchttpclient.zio.AsyncHttpClientZioBackend
+import com.bot4s.zmatrix.MatrixError.{ NetworkError, ResponseError }
+import com.bot4s.zmatrix.client.MatrixClient
 import com.bot4s.zmatrix.services.Authentication
-import zio.Schedule
+import sttp.client3.asynchttpclient.zio.AsyncHttpClientZioBackend
 
 trait ExampleApp[T] extends zio.ZIOAppDefault {
 

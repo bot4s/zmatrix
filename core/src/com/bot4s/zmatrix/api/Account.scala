@@ -1,6 +1,7 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
+
 import com.bot4s.zmatrix.models.responses._
 import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 

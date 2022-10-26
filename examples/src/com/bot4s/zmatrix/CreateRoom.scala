@@ -1,9 +1,10 @@
 package com.bot4s.zmatrix
 
-import zio._
 import zio.Console._
+import zio._
+
 import com.bot4s.zmatrix.api.{ roomCreation, rooms }
-import com.bot4s.zmatrix.models.{ EventType, Preset, RoomCreationData, Visibility }
+import com.bot4s.zmatrix.models._
 
 object CreateRoom extends ExampleApp[ExitCode] {
 
@@ -22,7 +23,7 @@ object CreateRoom extends ExampleApp[ExitCode] {
       .flatMap { roomId =>
         ZIO.logInfo(s"Created room with id $roomId") *>
           // roomMembership.invite(roomId, "@exampleUser:matrix.org") *>
-          rooms.sendMsg(roomId, EventType.roomMessages, "Welcome to my room")
+          rooms.sendMsg(roomId, "Welcome to my room")
       }
       .tapError(e => printLineError(e.toString()))
       .flatMap(x => printLine(x.toString()))

@@ -1,9 +1,7 @@
 package com.bot4s.zmatrix
 
 import zio.Console._
-import zio.{ ExitCode, ZIO }
-import zio.Schedule
-import zio.ZIOAppArgs
+import zio.{ExitCode, Schedule, ZIO, ZIOAppArgs}
 
 object Runner extends zio.ZIOAppDefault {
 
