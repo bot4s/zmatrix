@@ -1,5 +1,7 @@
 package com.bot4s.zmatrix.api
 
+import zio.ZIO
+
 import java.util.UUID
 
 import com.bot4s.zmatrix.models.RoomMessageType._
@@ -15,12 +17,13 @@ trait Rooms {
    * https://spec.matrix.org/latest/client-server-api/#mtext
    */
   def sendMsg(roomId: RoomId, messageEvent: RoomMessageType) =
-    sendWithAuth[EventResponse](
-      putJson(
-        Seq("rooms", roomId.id, "send", EventType.roomMessages.toString(), UUID.randomUUID().toString()),
-        messageEvent.asJson
+    ZIO.logDebug(messageEvent.asJson.toString()) *>
+      sendWithAuth[EventResponse](
+        putJson(
+          Seq("rooms", roomId.id, "send", EventType.roomMessages.toString(), UUID.randomUUID().toString()),
+          messageEvent.asJson
+        )
       )
-    )
 
   def sendMsg(roomId: RoomId, message: String) =
     sendWithAuth[EventResponse](

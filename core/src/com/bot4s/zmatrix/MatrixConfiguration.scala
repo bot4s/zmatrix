@@ -33,7 +33,7 @@ object MatrixConfiguration {
   val DEFAULT_API_VERSION = "v3"
   val DEFAULT_CONFIG_FILE = "bot.conf"
 
-  def get: URIO[MatrixConfiguration, Config] = ZIO.environmentWithZIO(_.get.get)
+  def get: URIO[MatrixConfiguration, Config] = ZIO.serviceWithZIO(_.get)
 
   private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[Config]] =
     ZIO.fromEither(ConfigSource.resources(filename).load[Config]).flatMap(e => Ref.make(e))

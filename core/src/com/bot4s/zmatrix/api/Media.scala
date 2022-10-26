@@ -10,7 +10,7 @@ import com.bot4s.zmatrix.MatrixError._
 import com.bot4s.zmatrix.models.MxcUri
 import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 import sttp.client3._
-import sttp.model.{MediaType, Method, Uri}
+import sttp.model.{ MediaType, Method, Uri }
 
 trait Media {
 
@@ -23,7 +23,7 @@ trait Media {
       content <- ZIO
                    .attemptBlocking(Files.readAllBytes(file.toPath()))
                    .mapError(t => ClientError(s"Unable to read ${file.toPath().toString()} content for upload", t))
-      result <- sendWithAuth[MxcUri](postMediaFile(Seq("upload"), content, ct))
+      result <- sendWithAuth[MxcUri](uploadMediaFile(content, ct))
     } yield result
   }
 
@@ -44,7 +44,7 @@ trait Media {
 
     for {
       content <- send(req)
-      result  <- sendWithAuth[MxcUri](postMediaFile(Seq("upload"), content, contentType))
+      result  <- sendWithAuth[MxcUri](uploadMediaFile(content, contentType))
     } yield result
   }
 }

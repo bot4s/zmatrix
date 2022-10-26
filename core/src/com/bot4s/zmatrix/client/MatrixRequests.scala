@@ -36,11 +36,11 @@ trait MatrixRequests {
     this might need a refactor in the future, but as of now,
     it can not be used to send another file
    */
-  def postMediaFile(path: Seq[String], content: Array[Byte], contentType: MediaType): MatrixAction =
+  def uploadMediaFile(content: Array[Byte], contentType: MediaType): MatrixAction =
     ZIO.serviceWithZIO[MatrixConfiguration] { config =>
       config.get.map { config =>
         basicRequest
-          .method(Method.POST, uri"${config.matrix.mediaApi}/$path")
+          .method(Method.POST, uri"${config.matrix.mediaApi}/upload")
           .body(content)
           .contentType(contentType)
           .response(asJsonEither[ResponseError, Json])
@@ -49,13 +49,13 @@ trait MatrixRequests {
 
   def withSince(
     request: Request[MatrixResponse[Json], Any]
-  ): URIO[AuthMatrixEnv, Request[MatrixResponse[Json], Any]] = ZIO.environmentWithZIO[AuthMatrixEnv] { env =>
-    val config = env.get[SyncTokenConfiguration]
-    config.get.map { config =>
-      val uriWithParam = request.uri.addParam("since", config.since)
-      request.copy[Identity, MatrixResponse[Json], Any](uri = uriWithParam)
+  ): URIO[AuthMatrixEnv, Request[MatrixResponse[Json], Any]] =
+    ZIO.serviceWithZIO[SyncTokenConfiguration] { config =>
+      config.get.map { config =>
+        val uriWithParam = request.uri.addParam("since", config.since)
+        request.copy[Identity, MatrixResponse[Json], Any](uri = uriWithParam)
+      }
     }
-  }
 
   /**
    * Private helpers to reuse component such as config extractions

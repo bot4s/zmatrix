@@ -4,11 +4,11 @@ import io.circe.generic.extras.semiauto.{ deriveConfiguredDecoder, deriveConfigu
 import io.circe.{ Decoder, Encoder }
 
 case class ImageInfo(
-  h: Int,
-  w: Int,
-  mimetype: String,
-  size: Int,
-  thumbnailUrl: Option[String]
+  h: Option[Int] = None,
+  w: Option[Int] = None,
+  mimetype: Option[String] = None,
+  size: Option[Int] = None,
+  thumbnailUrl: Option[String] = None
 )
 
 object ImageInfo {

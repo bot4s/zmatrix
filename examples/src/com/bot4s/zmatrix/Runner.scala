@@ -6,10 +6,11 @@ import zio.{ ExitCode, Schedule, ZIO, ZIOAppArgs }
 object Runner extends zio.ZIOAppDefault {
 
   private def examples = Map(
-    "Simple"     -> Simple,
-    "Upload"     -> Upload,
-    "SimpleSync" -> SimpleSync,
-    "CreateRoom" -> CreateRoom
+    "Simple"       -> Simple,
+    "Upload"       -> Upload,
+    "ImageMessage" -> ImageMessage,
+    "SimpleSync"   -> SimpleSync,
+    "CreateRoom"   -> CreateRoom
   )
 
   override def run: ZIO[Environment with ZIOAppArgs, Any, ExitCode] = {
