@@ -1,9 +1,10 @@
 package com.bot4s.zmatrix
 
-import sttp.client3.Request
 import zio.ZIO
+
 import com.bot4s.zmatrix.client.{ MatrixClient, MatrixParser, MatrixRequests }
 import io.circe.Decoder
+import sttp.client3.Request
 
 package object api extends MatrixRequests with WithAccess with MatrixParser {
 

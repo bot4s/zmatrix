@@ -1,10 +1,11 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
-import io.circe.Json
-import com.bot4s.zmatrix.{ MatrixEnv, MatrixError }
-import com.bot4s.zmatrix.models.responses._
+
 import com.bot4s.zmatrix.models.EventType
+import com.bot4s.zmatrix.models.responses._
+import com.bot4s.zmatrix.{ MatrixEnv, MatrixError }
+import io.circe.Json
 
 trait Login {
 

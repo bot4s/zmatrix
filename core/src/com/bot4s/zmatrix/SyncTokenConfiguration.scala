@@ -1,12 +1,13 @@
 package com.bot4s.zmatrix
 
-import zio.{ IO, Layer, Ref, UIO, URIO, ZIO }
-import pureconfig.{ ConfigSource, ConfigWriter }
-import pureconfig.generic.auto._
-import pureconfig.error.ConfigReaderFailures
+import zio._
+
 import java.io.{ BufferedWriter, File, FileWriter }
+
 import com.typesafe.config.ConfigRenderOptions
-import zio.ZLayer
+import pureconfig.error.ConfigReaderFailures
+import pureconfig.generic.auto._
+import pureconfig.{ ConfigSource, ConfigWriter }
 
 final case class SyncToken(
   since: Option[String] = None

@@ -1,15 +1,13 @@
 package com.bot4s.zmatrix.client
 
-import sttp.client3.ResponseException
+import zio.{ URIO, ZIO }
 
+import com.bot4s.zmatrix.MatrixError.ResponseError
+import com.bot4s.zmatrix.{ MatrixConfiguration, _ }
 import io.circe.{ Error, Json }
 import sttp.client3.circe._
-import sttp.model.Method
-import sttp.client3._
-import com.bot4s.zmatrix._
-import com.bot4s.zmatrix.MatrixConfiguration
-import com.bot4s.zmatrix.MatrixError.ResponseError
-import zio.{ URIO, ZIO }
+import sttp.client3.{ ResponseException, _ }
+import sttp.model.{ MediaType, Method }
 
 /**
  * This trait provides all the helper methods related to the queries that must
@@ -33,15 +31,31 @@ trait MatrixRequests {
   def post(path: Seq[String]): MatrixAction =
     postJson(path, Json.obj())
 
+  /*
+    This method is a bit specific as it is only for `media` file
+    this might need a refactor in the future, but as of now,
+    it can not be used to send another file
+   */
+  def uploadMediaFile(content: Array[Byte], contentType: MediaType): MatrixAction =
+    ZIO.serviceWithZIO[MatrixConfiguration] { config =>
+      config.get.map { config =>
+        basicRequest
+          .method(Method.POST, uri"${config.matrix.mediaApi}/upload")
+          .body(content)
+          .contentType(contentType)
+          .response(asJsonEither[ResponseError, Json])
+      }
+    }
+
   def withSince(
     request: Request[MatrixResponse[Json], Any]
-  ): URIO[AuthMatrixEnv, Request[MatrixResponse[Json], Any]] = ZIO.environmentWithZIO[AuthMatrixEnv] { env =>
-    val config = env.get[SyncTokenConfiguration]
-    config.get.map { config =>
-      val uriWithParam = request.uri.addParam("since", config.since)
-      request.copy[Identity, MatrixResponse[Json], Any](uri = uriWithParam)
+  ): URIO[AuthMatrixEnv, Request[MatrixResponse[Json], Any]] =
+    ZIO.serviceWithZIO[SyncTokenConfiguration] { config =>
+      config.get.map { config =>
+        val uriWithParam = request.uri.addParam("since", config.since)
+        request.copy[Identity, MatrixResponse[Json], Any](uri = uriWithParam)
+      }
     }
-  }
 
   /**
    * Private helpers to reuse component such as config extractions
@@ -49,10 +63,10 @@ trait MatrixRequests {
    */
 
   private def requestWithPath(method: Method, path: Seq[String]) =
-    ZIO.environmentWithZIO[MatrixConfiguration] { config =>
-      config.get.get.map { config =>
+    ZIO.serviceWithZIO[MatrixConfiguration] { config =>
+      config.get.map { config =>
         basicRequest
-          .method(method, uri"${config.matrix.apiPath}/$path")
+          .method(method, uri"${config.matrix.clientApi}/$path")
       }
     }
 
