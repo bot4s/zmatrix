@@ -3,7 +3,7 @@ name: Publish snapshot
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   compile-all:
