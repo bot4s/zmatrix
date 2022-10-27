@@ -4,7 +4,7 @@ import zio._
 
 import com.bot4s.zmatrix.api.login
 import com.bot4s.zmatrix.models.AccessToken
-import com.bot4s.zmatrix.{MatrixError, _}
+import com.bot4s.zmatrix.{ MatrixError, _ }
 
 /**
  * Authentication service responsible to store and refresh the access token

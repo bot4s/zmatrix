@@ -32,7 +32,7 @@ object SimpleSync extends ExampleApp[Long] {
             MatrixConfiguration.get.map(!_.matrix.userId.exists(botName => sender.startsWith(s"@$botName")))
           ZIO.whenZIO(notFromBot)(
             ZIO.logInfo(f"${roomId} Image received: ${content.body}") *>
-              rooms.sendMsg(roomId, RoomMessageTextContent("welcome back (image)"))
+              rooms.sendEvent(roomId, RoomMessageTextContent("welcome back (image)"))
           )
       }.updateState()
 

@@ -16,7 +16,7 @@ trait Rooms {
    * Documentation: https://matrix.org/docs/spec/client_server/latest#put-matrix-client-r0-rooms-roomid-send-eventtype-txnid
    * https://spec.matrix.org/latest/client-server-api/#mtext
    */
-  def sendMsg(roomId: RoomId, messageEvent: RoomMessageType) =
+  def sendEvent(roomId: RoomId, messageEvent: RoomMessageType) =
     ZIO.logDebug(messageEvent.asJson.toString()) *>
       sendWithAuth[EventResponse](
         putJson(

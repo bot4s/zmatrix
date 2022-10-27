@@ -4,7 +4,7 @@ import zio.test.Assertion._
 import zio.test._
 
 import com.bot4s.zmatrix.models.RoomMessageType._
-import com.bot4s.zmatrix.models.{MessageEvent, Preset, RoomCreationData, RoomEvent, RoomMessageType}
+import com.bot4s.zmatrix.models.{ MessageEvent, Preset, RoomCreationData, RoomEvent, RoomMessageType }
 import io.circe.Json
 import io.circe.parser.decode
 import io.circe.syntax._

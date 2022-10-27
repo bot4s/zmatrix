@@ -102,26 +102,3 @@ class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaMo
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }
-
-object webhook extends Cross[WebhookModule](scalaVersions: _*)
-class WebhookModule(val crossScalaVersion: String) extends CrossScalaModule {
-  val moduleDeps = Seq(core(crossScalaVersion))
-  override def scalacOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-Ywarn-unused",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-unchecked",
-    "-Ywarn-dead-code"
-  )
-
-  def mainClass = Some("com.bot4s.zmatrix.Runner")
-
-  def ivyDeps = Agg(
-    ivy"io.d11::zhttp:2.0.0-RC11",
-    ivy"dev.zio::zio-json:0.3.0"
-  )
-}

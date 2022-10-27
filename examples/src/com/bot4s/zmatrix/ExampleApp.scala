@@ -1,6 +1,6 @@
 package com.bot4s.zmatrix
 
-import zio.{Schedule, _}
+import zio.{ Schedule, _ }
 
 import com.bot4s.zmatrix.MatrixError.{ NetworkError, ResponseError }
 import com.bot4s.zmatrix.client.MatrixClient

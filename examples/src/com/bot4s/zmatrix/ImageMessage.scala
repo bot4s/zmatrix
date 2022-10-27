@@ -17,7 +17,7 @@ object ImageMessage extends ExampleApp[Unit] {
   val runExample =
     (for {
       up <- upload
-      _ <- rooms.sendMsg(
+      _ <- rooms.sendEvent(
              RoomId(""), // replace with a room that exists
              RoomMessageImageContent(
                "CC Logo",

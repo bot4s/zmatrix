@@ -2,7 +2,7 @@ package com.bot4s.zmatrix
 
 import zio.Console._
 
-import com.bot4s.zmatrix.api.{accounts, roomMembership}
+import com.bot4s.zmatrix.api.{ accounts, roomMembership }
 
 object Simple extends ExampleApp[Unit] {
 
