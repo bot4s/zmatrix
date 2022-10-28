@@ -18,6 +18,9 @@ object MatrixError {
   final case class ResponseError(errcode: String, error: String, softLogout: Option[Boolean] = None)
       extends Exception(s"Matrix API error: ($errcode, $error)")
       with MatrixError
+  final case class ClientError(error: String, underlying: Throwable)
+      extends Exception(s"Client Error $error")
+      with MatrixError
 
   implicit val responseErrorDecoder: Decoder[ResponseError] =
     io.circe.generic.semiauto.deriveDecoder[ResponseError]

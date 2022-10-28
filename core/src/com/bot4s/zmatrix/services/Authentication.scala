@@ -1,11 +1,10 @@
 package com.bot4s.zmatrix.services
 
-import com.bot4s.zmatrix._
-import zio.{ IO, Ref, UIO, URIO, ZIO }
-import com.bot4s.zmatrix.models.AccessToken
+import zio._
+
 import com.bot4s.zmatrix.api.login
-import com.bot4s.zmatrix.MatrixError
-import zio.ZLayer
+import com.bot4s.zmatrix.models.AccessToken
+import com.bot4s.zmatrix.{ MatrixError, _ }
 
 /**
  * Authentication service responsible to store and refresh the access token

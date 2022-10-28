@@ -1,9 +1,9 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
-import com.bot4s.zmatrix._
+
 import com.bot4s.zmatrix.models.Device
-import com.bot4s.zmatrix.MatrixError
+import com.bot4s.zmatrix.{ MatrixError, _ }
 
 trait DeviceManagement {
   /*

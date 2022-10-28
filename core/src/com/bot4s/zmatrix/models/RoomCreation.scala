@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix.models
-import io.circe.{ Decoder, Encoder }
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.{ deriveConfiguredDecoder, deriveConfiguredEncoder }
+import io.circe.{ Decoder, Encoder }
 
 object Visibility extends Enumeration {
   type Visibility = Value

@@ -1,24 +1,13 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.{ Decoder, HCursor, Json }
-import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
+import io.circe.generic.extras.semiauto._
+import io.circe.{ Decoder, Json }
 
-final case class RoomEventWrapper(
-  timeline: RoomEventWrapperContent
-)
-
-final case class RoomEventWrapperContent(
-  events: List[RoomEvent],
-  limited: Boolean
-)
-
-object RoomEventWrapper {
-  implicit val roomEventWrapperDecoder: Decoder[RoomEventWrapper]               = deriveConfiguredDecoder
-  implicit val roomEventWrapperContentDecoder: Decoder[RoomEventWrapperContent] = deriveConfiguredDecoder
-}
+import RoomMessageType._
 
 /**
- * Matrix Event class for events in invited rooms
+ * Matrix Event class for events in rooms
+ * This is an implementation for https://spec.matrix.org/v1.3/client-server-api/#instant-messaging
  *
  * Those events does not have all the fields that similar events
  * have for the joined rooms.
@@ -27,47 +16,36 @@ object RoomEventWrapper {
  */
 sealed trait RoomEvent
 
+// m.room.message event
+final case class MessageEvent(sender: String, eventId: String, content: RoomMessageType) extends RoomEvent {
+  val `type`: String = "m.room.message"
+}
+
+// m.room.topic event
+final case class TopicEvent(sender: String, eventId: String, content: TopicMessageContent) extends RoomEvent {
+  val `type`: String = "m.room.topic"
+}
+final case class TopicMessageContent(topic: String)
+
 object RoomEvent {
-  // This corresponds to an m.room.member event
-  final case class RoomMessageText(
-    sender: String,
-    eventId: String,
-    content: RoomMessageTextContent,
-    `type`: String = "m.room.message"
-  ) extends RoomEvent
-
-  final case class RoomMessageTextContent(
-    msgtype: String = "m.text",
-    body: String
-  )
-
   final case class UnknownEvent(
     `type`: String,
     content: Json
   ) extends RoomEvent
 
-  implicit val roomMessageTextDecoder: Decoder[RoomMessageText]               = deriveConfiguredDecoder
-  implicit val roomMessageTextContentDecoder: Decoder[RoomMessageTextContent] = deriveConfiguredDecoder
+  implicit val roomMessageDecoder: Decoder[MessageEvent]                = deriveConfiguredDecoder
+  implicit val topicMessageDecoder: Decoder[TopicEvent]                 = deriveConfiguredDecoder
+  implicit val topicMessageContentDecoder: Decoder[TopicMessageContent] = deriveConfiguredDecoder
 
-  implicit val unknownEventDecoder: Decoder[UnknownEvent] = deriveConfiguredDecoder
-
-  implicit val roomEventDecoder: Decoder[RoomEvent] = new Decoder[RoomEvent] {
-    def apply(c: HCursor): Decoder.Result[RoomEvent] =
-      c.downField("type").as[String].flatMap { label =>
-        label match {
-          case "m.room.message" => roomMessageDecoder(c)
-          case _                => Right(UnknownEvent(label, c.value))
-        }
+  /* Those decoder are used by the sync state */
+  implicit val roomEventDecoder: Decoder[RoomEvent] = c =>
+    c.downField("type").as[String].flatMap { label =>
+      label match {
+        case "m.room.message" => c.as[MessageEvent]
+        case "m.room.topic"   => c.as[TopicEvent]
+        case "m.room.member"  => Right(UnknownEvent(label, c.value)) // another kind of room message, as a placeholder
+        case _                => Right(UnknownEvent(label, c.value))
       }
-  }
+    }
 
-  val roomMessageDecoder = new Decoder[RoomEvent] {
-    def apply(c: HCursor): Decoder.Result[RoomEvent] =
-      c.downField("content").downField("msgtype").as[String].flatMap { msgType =>
-        msgType match {
-          case "m.text" => c.as[RoomMessageText]
-          case _        => Right(UnknownEvent(f"m.room.message/$msgType", c.value))
-        }
-      }
-  }
 }

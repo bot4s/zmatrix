@@ -1,11 +1,11 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
-import com.bot4s.zmatrix.models.responses._
+
 import com.bot4s.zmatrix.models.RoomId
+import com.bot4s.zmatrix.models.responses._
+import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
 import io.circe.Json
-import com.bot4s.zmatrix.models.StateDecoder._
 
 trait RoomMembership {
 

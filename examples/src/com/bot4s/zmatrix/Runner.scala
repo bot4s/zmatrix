@@ -1,16 +1,16 @@
 package com.bot4s.zmatrix
 
 import zio.Console._
-import zio.{ ExitCode, ZIO }
-import zio.Schedule
-import zio.ZIOAppArgs
+import zio.{ ExitCode, Schedule, ZIO, ZIOAppArgs }
 
 object Runner extends zio.ZIOAppDefault {
 
   private def examples = Map(
-    "Simple"     -> Simple,
-    "SimpleSync" -> SimpleSync,
-    "CreateRoom" -> CreateRoom
+    "Simple"       -> Simple,
+    "Upload"       -> Upload,
+    "ImageMessage" -> ImageMessage,
+    "SimpleSync"   -> SimpleSync,
+    "CreateRoom"   -> CreateRoom
   )
 
   override def run: ZIO[Environment with ZIOAppArgs, Any, ExitCode] = {

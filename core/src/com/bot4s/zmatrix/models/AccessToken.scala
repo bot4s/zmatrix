@@ -1,6 +1,7 @@
 package com.bot4s.zmatrix.models
 
 import zio.{ UIO, ZIO }
+
 import io.circe.Decoder
 import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 import sttp.client3.RequestT

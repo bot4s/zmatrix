@@ -1,8 +1,10 @@
 package com.bot4s
 
+import zio.ZIO
+
 import com.bot4s.zmatrix.client.{ MatrixClient, MatrixRequests }
 import com.bot4s.zmatrix.models._
-import zio.ZIO
+import com.bot4s.zmatrix.models.responses.SyncState
 import com.bot4s.zmatrix.services.Authentication
 
 package object zmatrix extends MatrixRequests {

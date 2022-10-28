@@ -1,11 +1,10 @@
 package com.bot4s.zmatrix.client
 
-import sttp.client3.{ asBoth, asStringAlways, Request }
 import zio.{ IO, Task, URLayer, ZIO, ZLayer }
+
 import com.bot4s.zmatrix.MatrixError.{ NetworkError, SerializationError }
 import com.bot4s.zmatrix.{ MatrixError, MatrixResponse }
-import sttp.client3.{ DeserializationException, HttpError }
-import sttp.client3.SttpBackend
+import sttp.client3._
 
 /**
  * This service provide the low lever interface with Matrix.
@@ -13,9 +12,7 @@ import sttp.client3.SttpBackend
  * The underlying errors must be wrapped into a subtype of MatrixError
  */
 trait MatrixClient {
-  def send[T](
-    request: Request[MatrixResponse[T], Any]
-  ): IO[MatrixError, T]
+  def send[T](request: Request[MatrixResponse[T], Any]): IO[MatrixError, T]
 }
 
 object MatrixClient {
