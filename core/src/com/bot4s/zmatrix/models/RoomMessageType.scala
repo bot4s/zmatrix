@@ -44,9 +44,12 @@ object RoomMessageType {
   }
   implicit val imageContentDecoder: Decoder[RoomMessageImageContent] = deriveConfiguredDecoder
 
+  implicit val emptyMessageEncoder = deriveConfiguredEncoder[RoomMessageEmpty.type]
+
   implicit val messageTypeEncoder: Encoder[RoomMessageType] = Encoder.instance {
-    case text: RoomMessageTextContent => text.asJson
-    case img: RoomMessageImageContent => img.asJson
+    case text: RoomMessageTextContent    => text.asJson
+    case img: RoomMessageImageContent    => img.asJson
+    case redacted: RoomMessageEmpty.type => redacted.asJson
   }
   implicit val messageTypeDecoder: Decoder[RoomMessageType] = c =>
     c.downField("msgtype").as[String].left.flatMap(_ => Right("")).flatMap {
