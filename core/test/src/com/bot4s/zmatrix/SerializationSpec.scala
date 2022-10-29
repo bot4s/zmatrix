@@ -63,13 +63,51 @@ object SerializationSpec extends ZIOSpecDefault {
 }
       """
       val res    = decode[RoomEvent](source)
-      assert(res.toOption)(
-        isSome(
+      assert(res)(
+        isRight(
           equalTo(
             MessageEvent(
               sender = "@bot:matrix.org",
               eventId = "$5w9tsY4TSSgW_sTVeyt1MlpgW0N_XuTvNntK111-JmI",
               content = RoomMessageTextContent("success")
+            )
+          )
+        )
+      )
+    },
+    test("redacted") {
+      val source = """
+{
+  "type": "m.room.message",
+  "sender": "@user:matrix.org",
+  "content": {},
+  "origin_server_ts": 1666874589140,
+  "unsigned": {
+      "redacted_by": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg",
+      "redacted_because": {
+          "type": "m.room.redaction",
+          "sender": "@other:matrix.org",
+          "content": {},
+          "redacts": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc",
+          "origin_server_ts": 1666874601850,
+          "unsigned": {
+              "age": 111624586
+          },
+          "event_id": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg"
+      },
+      "age": 111637296
+  },
+  "event_id": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc"
+}
+      """
+      val res    = decode[RoomEvent](source)
+      assert(res)(
+        isRight(
+          equalTo(
+            MessageEvent(
+              sender = "@user:matrix.org",
+              eventId = "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc",
+              content = RoomMessageEmpty
             )
           )
         )

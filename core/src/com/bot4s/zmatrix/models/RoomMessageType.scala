@@ -11,6 +11,11 @@ sealed trait RoomMessageType {
 
 object RoomMessageType {
 
+  // redaction/deleted messages
+  final case object RoomMessageEmpty extends RoomMessageType {
+    val msgtype = ""
+  }
+
   final case class RoomMessageTextContent(
     body: String,
     format: Option[String] = None,
@@ -44,9 +49,10 @@ object RoomMessageType {
     case img: RoomMessageImageContent => img.asJson
   }
   implicit val messageTypeDecoder: Decoder[RoomMessageType] = c =>
-    c.downField("msgtype").as[String].flatMap {
+    c.downField("msgtype").as[String].left.flatMap(_ => Right("")).flatMap {
       case "m.text"  => c.as[RoomMessageTextContent]
       case "m.image" => c.as[RoomMessageImageContent]
+      case ""        => Right(RoomMessageEmpty)
       case msgtype   => Left(DecodingFailure(s"$msgtype is not supported", Nil))
     }
 }
