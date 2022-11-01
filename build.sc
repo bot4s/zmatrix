@@ -48,7 +48,7 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio:${sttpVersion}",
+    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
     ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
     ivy"io.circe::circe-generic:${circeVersion}",
     ivy"io.circe::circe-generic-extras:${circeVersion}",
