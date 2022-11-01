@@ -1,5 +1,6 @@
 out/
 .bloop/
+.bsp/
 .vscode/
 .metals/
 token.conf
