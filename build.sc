@@ -45,6 +45,7 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
+    ivy"dev.zio::zio-streams:${zioVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",

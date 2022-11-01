@@ -10,6 +10,7 @@ object Runner extends ZIOAppDefault {
     "Upload"        -> Upload,
     "ImageMessage"  -> ImageMessage,
     "SimpleSync"    -> SimpleSync,
+    "StreamSync"    -> StreamSync,
     "CreateRoom"    -> CreateRoom,
     "ClearSessions" -> ClearSessions
   )
