@@ -7,7 +7,7 @@ import $ivy.`com.goyeau::mill-scalafix::0.2.11`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
-  val zioLoggingVersion     = "2.1.2"
+  val zioLoggingVersion     = "2.1.3"
   val zioVersion            = "2.0.2"
   val sttpVersion           = "3.8.3"
   val circeVersion          = "0.14.3"
@@ -48,7 +48,7 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::async-http-client-backend-zio:${sttpVersion}",
+    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
     ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
     ivy"io.circe::circe-generic:${circeVersion}",
     ivy"io.circe::circe-generic-extras:${circeVersion}",

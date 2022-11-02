@@ -3,10 +3,11 @@ package com.bot4s.zmatrix
 import zio.Console.printLine
 import zio.ZIO
 
+import java.io.File
+
 import com.bot4s.zmatrix.api.media
 import sttp.client3._
 import sttp.model.MediaType
-import java.io.File
 
 object Upload extends ExampleApp[Unit] {
 
