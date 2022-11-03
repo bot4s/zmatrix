@@ -17,8 +17,8 @@ trait Authentication {
 
 object Authentication {
 
-  def accessToken: URIO[Authentication, AccessToken]         = ZIO.environmentWithZIO(_.get.accessToken)
-  def refresh: ZIO[Authentication, MatrixError, AccessToken] = ZIO.environmentWithZIO(_.get.refresh)
+  def accessToken: URIO[Authentication, AccessToken]         = ZIO.serviceWithZIO(_.accessToken)
+  def refresh: ZIO[Authentication, MatrixError, AccessToken] = ZIO.serviceWithZIO(_.refresh)
 
   /**
    * Default implementation for the Authentiction service, it will use the  MATRIX_BOT_ACCESS and MATRIX_BOT_PASSWORD

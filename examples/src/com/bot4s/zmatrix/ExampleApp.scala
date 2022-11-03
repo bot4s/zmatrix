@@ -8,7 +8,7 @@ import sttp.client3.httpclient.zio.HttpClientZioBackend
 
 trait ExampleApp[T] extends zio.ZIOAppDefault {
 
-  def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
+  def runExample: ZIO[AuthMatrixEnv with Matrix, MatrixError, T]
 
   override def run: ZIO[Environment, Any, ExitCode] =
     (Authentication.refresh *> runExample.withAutoRefresh.retry(Schedule.recurs(5)))
@@ -22,7 +22,8 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
         MatrixConfiguration.live().mapError(x => new Exception(s"Unable to read configuration $x")).orDie,
         Authentication.live,
         HttpClientZioBackend.layer().orDie,
-        MatrixClient.live
+        MatrixClient.live,
+        Matrix.make
       )
 
 }
