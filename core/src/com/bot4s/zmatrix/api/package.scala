@@ -2,14 +2,14 @@ package com.bot4s.zmatrix
 
 import zio.ZIO
 
+import com.bot4s.zmatrix.core.Request
 import com.bot4s.zmatrix.client.{ MatrixClient, MatrixParser, MatrixRequests }
 import io.circe.Decoder
-import sttp.client3.Request
 
 package object api extends MatrixRequests with WithAccess with MatrixParser {
 
   def send[T](
-    request: Request[MatrixResponse[T], Any]
+    request: Request[T]
   ): ZIO[MatrixClient, MatrixError, T] =
     ZIO.environmentWithZIO[MatrixClient](_.get.send(request))
 
