@@ -2,7 +2,7 @@ package com.bot4s.zmatrix.client
 
 import zio.{ IO, Task, URLayer, ZIO, ZLayer }
 
-import com.bot4s.zmatrix.MatrixError.{ NetworkError, SerializationError }
+import com.bot4s.zmatrix.MatrixError.NetworkError
 import com.bot4s.zmatrix._
 import com.bot4s.zmatrix.core.{ ApiScope, Request }
 import io.circe.Json
@@ -48,20 +48,6 @@ final case class LiveMatrixClient(backend: SttpBackend[Task, Any], matrixConfig:
       (parsed, raw) = result.body
       _            <- ZIO.logTrace(raw)
 
-      json <- ZIO.fromEither(parsed).mapError {
-                case httpError: HttpError[_] =>
-                  httpError.body match {
-                    case error: MatrixError => error
-                    case _ =>
-                      MatrixError.NetworkError(
-                        "Something wrong happened - this part of the code should probably never be reached",
-                        httpError
-                      )
-                  }
-                case deserialisationError: DeserializationException[_] =>
-                  SerializationError(deserialisationError.body, deserialisationError.error)
-                case error =>
-                  NetworkError(f"Unknown error: ${error.toString()}", error)
-              }
+      json <- ZIO.fromEither(parsed)
     } yield json
 }

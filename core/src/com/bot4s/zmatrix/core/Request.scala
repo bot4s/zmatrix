@@ -30,6 +30,16 @@ object ApiScope {
   case object Media  extends ApiScope
 }
 
+/*
+  As of now the request class is as simple as it could be
+  we could also simple wrap a `RequestT` from sttp, but we might loose
+  some customization and delayed configuration.
+
+  This also assume that we will only have to deal with JSON. There are no
+  counter-indication in matrix' documentation but in order to support
+  other kind of body, we would have to deal with `ResponseAs` and other
+  pretty complexe topic that I don't want to introduce unless required
+ */
 final case class Request(
   method: Method,
   path: Seq[String],
@@ -41,7 +51,7 @@ final case class Request(
 
   def toRequest(
     baseUri: String
-  ): HttpRequest[Either[ResponseException[MatrixError.ResponseError, io.circe.Error], Json], Any] = {
+  ): HttpRequest[Either[MatrixError, Json], Any] = {
     val req = body match {
       case EmptyBody =>
         basicRequest
@@ -64,7 +74,13 @@ final case class Request(
       case NoAuth           => withParams
       case TokenAuth(token) => withParams.auth.bearer(token)
     }
-    withAuth.response(asJsonEither[MatrixError.ResponseError, Json])
+
+    withAuth
+      .response(asJsonEither[MatrixError.ResponseError, Json])
+      .mapResponse(_.left.map {
+        case HttpError(error, _)                   => error
+        case DeserializationException(body, error) => MatrixError.SerializationError(body, error)
+      })
   }
 }
 
