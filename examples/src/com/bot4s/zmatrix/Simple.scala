@@ -7,10 +7,12 @@ import com.bot4s.zmatrix.api.{ accounts, roomMembership }
 object Simple extends ExampleApp[Unit] {
 
   val runExample =
-    (accounts.whoAmI *> roomMembership.joinedRooms())
+    (for {
+      _     <- accounts.whoAmI.debug
+      rooms <- roomMembership.joinedRooms()
+      _     <- printLine(f"I'm a member of all those rooms: ${rooms}")
+    } yield ())
       .tapError(e => printLineError(e.toString()))
-      .flatMap(x => printLine(f"I'm a member of all those rooms: ${x.toString()}"))
       .refineOrDie { case x: MatrixError => x }
-      .unit
 
 }

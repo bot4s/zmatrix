@@ -1,9 +1,9 @@
 package com.bot4s.zmatrix
 
 import zio.Console._
-import zio.{ ExitCode, Schedule, ZIO, ZIOAppArgs }
+import zio._
 
-object Runner extends zio.ZIOAppDefault {
+object Runner extends ZIOAppDefault {
 
   private def examples = Map(
     "Simple"       -> Simple,

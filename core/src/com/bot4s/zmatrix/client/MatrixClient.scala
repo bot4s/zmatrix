@@ -3,11 +3,10 @@ package com.bot4s.zmatrix.client
 import zio.{ IO, Task, URLayer, ZIO, ZLayer }
 
 import com.bot4s.zmatrix.MatrixError.{ NetworkError, SerializationError }
-import com.bot4s.zmatrix.MatrixConfiguration
-import com.bot4s.zmatrix.{ MatrixError, MatrixResponse }
-import com.bot4s.zmatrix.core.Request
+import com.bot4s.zmatrix._
+import com.bot4s.zmatrix.core.{ ApiScope, Request }
+import io.circe.Json
 import sttp.client3._
-import io.circe.Decoder
 
 /**
  * This service provide the low lever interface with Matrix.
@@ -15,12 +14,12 @@ import io.circe.Decoder
  * The underlying errors must be wrapped into a subtype of MatrixError
  */
 trait MatrixClient {
-  def send[T](request: Request[T]): IO[MatrixError, T]
+  def send(request: Request): IO[MatrixError, Json]
 }
 
 object MatrixClient {
 
-  def send[T](request: Request[T]): ZIO[MatrixClient, MatrixError, T] =
+  def send(request: Request): ZIO[MatrixClient, MatrixError, Json] =
     ZIO.environmentWithZIO(_.get.send(request))
 
   def live: URLayer[MatrixConfiguration with SttpBackend[Task, Any], MatrixClient] =
@@ -30,22 +29,39 @@ object MatrixClient {
 final case class LiveMatrixClient(backend: SttpBackend[Task, Any], matrixConfig: MatrixConfiguration)
     extends MatrixClient {
 
-  override def send[T](
-    request: Request[T]
-  ): IO[MatrixError, T] =
+  override def send(
+    request: Request
+  ): IO[MatrixError, Json] =
     for {
-      config     <- matrixConfig.get
-      httpRequest = request.toRequest(config.matrix.clientApi)
+      config <- matrixConfig.get
+      prefix = request.scope match {
+                 case ApiScope.Client => config.matrix.clientApi
+                 case ApiScope.Media  => config.matrix.mediaApi
+
+               }
+      httpRequest = request.toRequest(prefix)
       _          <- ZIO.logDebug(httpRequest.toCurl)
       result <- backend
                   .send(httpRequest.response(asBoth(httpRequest.response, asStringAlways)))
-                  .mapError(t => NetworkError(f"Error contacting matrix server: ${t.toString()}", t))
-      _ <- ZIO.logTrace(result.body._2)
-      json <- ZIO.fromEither(result.body._1).mapError {
-                case httpError: HttpError[MatrixError] => httpError.body
+                  .mapError(error => NetworkError(f"Error contacting matrix server: ${error.toString()}", error))
+
+      (parsed, raw) = result.body
+      _            <- ZIO.logTrace(raw)
+
+      json <- ZIO.fromEither(parsed).mapError {
+                case httpError: HttpError[_] =>
+                  httpError.body match {
+                    case error: MatrixError => error
+                    case _ =>
+                      MatrixError.NetworkError(
+                        "Something wrong happened - this part of the code should probably never be reached",
+                        httpError
+                      )
+                  }
                 case deserialisationError: DeserializationException[_] =>
                   SerializationError(deserialisationError.body, deserialisationError.error)
-                case x => NetworkError(f"Unknown error: ${x.toString()}", x)
+                case error =>
+                  NetworkError(f"Unknown error: ${error.toString()}", error)
               }
-    } yield ???
+    } yield json
 }

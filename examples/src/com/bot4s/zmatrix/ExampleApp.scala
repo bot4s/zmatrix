@@ -11,10 +11,9 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
   def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
 
   override def run: ZIO[Environment, Any, ExitCode] =
-    runExample.withAutoRefresh
+    (Authentication.refresh *> runExample.withAutoRefresh
       .tapError(error => ZIO.logError(error.toString()))
-      .retry(Schedule.forever)
-      .exitCode
+      .retry(Schedule.forever)).exitCode
       .provide(
         SyncTokenConfiguration
           .persistent()

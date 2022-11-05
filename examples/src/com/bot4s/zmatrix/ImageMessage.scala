@@ -11,7 +11,7 @@ object ImageMessage extends ExampleApp[Unit] {
   val upload = media
     .upload(
       uri"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Cc.logo.circle.svg/1024px-Cc.logo.circle.png",
-      MediaType.ImagePng
+      Some(MediaType.ImagePng)
     )
 
   val runExample =
