@@ -2,7 +2,6 @@ package com.bot4s.zmatrix.services
 
 import zio._
 
-import com.bot4s.zmatrix.api.login
 import com.bot4s.zmatrix.models.AccessToken
 import com.bot4s.zmatrix.{ MatrixError, _ }
 
@@ -17,8 +16,8 @@ trait Authentication {
 
 object Authentication {
 
-  def accessToken: URIO[Authentication, AccessToken]         = ZIO.environmentWithZIO(_.get.accessToken)
-  def refresh: ZIO[Authentication, MatrixError, AccessToken] = ZIO.environmentWithZIO(_.get.refresh)
+  def accessToken: URIO[Authentication, AccessToken]         = ZIO.serviceWithZIO(_.accessToken)
+  def refresh: ZIO[Authentication, MatrixError, AccessToken] = ZIO.serviceWithZIO(_.refresh)
 
   /**
    * Default implementation for the Authentiction service, it will use the  MATRIX_BOT_ACCESS and MATRIX_BOT_PASSWORD
@@ -37,7 +36,7 @@ object Authentication {
               def refresh: IO[MatrixError, AccessToken] =
                 (config.matrix.userId, sys.env.get("MATRIX_BOT_PASSWORD")) match {
                   case (Some(userId), Some(password)) =>
-                    login
+                    Matrix
                       .passwordLogin(
                         user = userId,
                         password = password,

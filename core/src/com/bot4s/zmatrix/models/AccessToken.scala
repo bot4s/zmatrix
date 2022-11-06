@@ -1,15 +1,9 @@
 package com.bot4s.zmatrix.models
 
-import zio.{ UIO, ZIO }
-
 import io.circe.Decoder
 import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
-import sttp.client3.RequestT
 
-final case class AccessToken(token: String) extends AnyVal {
-  def authenticateM[U[_], T, S](request: RequestT[U, T, S]): UIO[RequestT[U, T, S]] =
-    ZIO.succeed(request.auth.bearer(token))
-}
+final case class AccessToken(token: String) extends AnyVal
 
 object AccessToken {
   // We want to support both the derivation with the token field and also a flattened "anyval" decoding

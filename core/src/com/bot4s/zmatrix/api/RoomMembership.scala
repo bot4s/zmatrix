@@ -4,10 +4,10 @@ import zio.ZIO
 
 import com.bot4s.zmatrix.models.RoomId
 import com.bot4s.zmatrix.models.responses._
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ AuthMatrixEnv, Matrix, MatrixApiBase, MatrixError }
 import io.circe.Json
 
-trait RoomMembership {
+trait RoomMembership { self: MatrixApiBase =>
 
   /**
    * Join a given room
@@ -20,7 +20,7 @@ trait RoomMembership {
    * Get a list of joined rooms
    * Documentation: https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-joined-rooms
    */
-  def joinedRooms(): ZIO[AuthMatrixEnv, MatrixError, List[RoomId]] =
+  def joinedRooms: ZIO[AuthMatrixEnv, MatrixError, List[RoomId]] =
     sendWithAuth[List[RoomId]](get(Seq("joined_rooms")))(_.downField("joined_rooms").as[List[RoomId]])
 
   /**
@@ -98,4 +98,17 @@ trait RoomMembership {
 
 }
 
-object roomMembership extends RoomMembership
+trait RoomMembershipAccessors {
+  def join(roomId: RoomId)                 = ZIO.serviceWithZIO[Matrix](_.join(roomId))
+  def joinedRooms                          = ZIO.serviceWithZIO[Matrix](_.joinedRooms)
+  def invite(roomId: RoomId, user: String) = ZIO.serviceWithZIO[Matrix](_.invite(roomId, user))
+  def forget(roomId: RoomId)               = ZIO.serviceWithZIO[Matrix](_.forget(roomId))
+  def leave(roomId: RoomId)                = ZIO.serviceWithZIO[Matrix](_.leave(roomId))
+
+  def ban(roomId: RoomId, user: String, reason: Option[String] = None) =
+    ZIO.serviceWithZIO[Matrix](_.ban(roomId, user, reason))
+  def unban(roomId: RoomId, user: String) =
+    ZIO.serviceWithZIO[Matrix](_.unban(roomId, user))
+  def kick(roomId: RoomId, user: String, reason: Option[String] = None) =
+    ZIO.serviceWithZIO[Matrix](_.ban(roomId, user, reason))
+}

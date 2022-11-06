@@ -6,14 +6,13 @@ import com.bot4s.zmatrix.client.MatrixClient
 import com.bot4s.zmatrix.services.Authentication
 import sttp.client3.httpclient.zio.HttpClientZioBackend
 
-trait ExampleApp[T] extends zio.ZIOAppDefault {
+trait ExampleApp[T] extends ZIOAppDefault {
 
   def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
 
   override def run: ZIO[Environment, Any, ExitCode] =
-    runExample.withAutoRefresh
+    (Authentication.refresh *> runExample.withAutoRefresh.retry(Schedule.recurs(5)))
       .tapError(error => ZIO.logError(error.toString()))
-      .retry(Schedule.forever)
       .exitCode
       .provide(
         SyncTokenConfiguration
@@ -23,7 +22,8 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
         MatrixConfiguration.live().mapError(x => new Exception(s"Unable to read configuration $x")).orDie,
         Authentication.live,
         HttpClientZioBackend.layer().orDie,
-        MatrixClient.live
+        MatrixClient.live,
+        Matrix.make
       )
 
 }

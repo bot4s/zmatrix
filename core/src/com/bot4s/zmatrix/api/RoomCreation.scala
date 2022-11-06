@@ -3,10 +3,10 @@ package com.bot4s.zmatrix.api
 import zio.ZIO
 
 import com.bot4s.zmatrix.models.{ RoomCreationData, RoomId }
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ AuthMatrixEnv, Matrix, MatrixApiBase, MatrixError }
 import io.circe.syntax._
 
-trait RoomCreation {
+trait RoomCreation { self: MatrixApiBase =>
 
   /**
    * Create a room on a matrix server
@@ -17,4 +17,6 @@ trait RoomCreation {
 
 }
 
-object roomCreation extends RoomCreation
+private[zmatrix] trait RoomCreationAccessors {
+  def createRoom(roomCreation: RoomCreationData) = ZIO.serviceWithZIO[Matrix](_.createRoom(roomCreation))
+}
