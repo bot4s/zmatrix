@@ -3,11 +3,14 @@ package com.bot4s.zmatrix.api
 import zio.ZIO
 
 import com.bot4s.zmatrix.models.responses._
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ AuthMatrixEnv, Matrix, MatrixApiBase, MatrixError }
 
-trait Account {
+trait Account { self: MatrixApiBase =>
   def whoAmI: ZIO[AuthMatrixEnv, MatrixError, UserResponse] =
     sendWithAuth[UserResponse](get(Seq("account", "whoami")))
 }
 
-object accounts extends Account
+private[zmatrix] trait AccountAccessors {
+  def whoAmI: ZIO[AuthMatrixEnv, MatrixError, UserResponse] =
+    ZIO.serviceWithZIO[Matrix](_.whoAmI)
+}

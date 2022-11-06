@@ -3,14 +3,13 @@ package com.bot4s
 import zio._
 
 import com.bot4s.zmatrix.MatrixError._
-import com.bot4s.zmatrix.client.MatrixClient
 import com.bot4s.zmatrix.models._
 import com.bot4s.zmatrix.models.responses.SyncState
 import com.bot4s.zmatrix.services.Authentication
 import sttp.client3._
 
 package object zmatrix {
-  type MatrixEnv     = MatrixClient with MatrixConfiguration with SyncTokenConfiguration with SttpBackend[Task, Any]
+  type MatrixEnv     = Matrix with MatrixConfiguration with SyncTokenConfiguration with SttpBackend[Task, Any]
   type AuthMatrixEnv = MatrixEnv with Authentication
 
   // I'm not sure about those extension method yet, they provide a pretty nice way of writing bots
