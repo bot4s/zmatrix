@@ -4,7 +4,7 @@ import zio.{ IO, Task, URLayer, ZIO, ZLayer }
 
 import com.bot4s.zmatrix.MatrixError.NetworkError
 import com.bot4s.zmatrix._
-import com.bot4s.zmatrix.core.{ ApiScope, Request }
+import com.bot4s.zmatrix.core.{ ApiScope, JsonRequest }
 import io.circe.Json
 import sttp.client3._
 
@@ -14,12 +14,12 @@ import sttp.client3._
  * The underlying errors must be wrapped into a subtype of MatrixError
  */
 trait MatrixClient {
-  def send(request: Request): IO[MatrixError, Json]
+  def send(request: JsonRequest): IO[MatrixError, Json]
 }
 
 object MatrixClient {
 
-  def send(request: Request): ZIO[MatrixClient, MatrixError, Json] =
+  def send(request: JsonRequest): ZIO[MatrixClient, MatrixError, Json] =
     ZIO.environmentWithZIO(_.get.send(request))
 
   def live: URLayer[MatrixConfiguration with SttpBackend[Task, Any], MatrixClient] =
@@ -30,7 +30,7 @@ final case class LiveMatrixClient(backend: SttpBackend[Task, Any], matrixConfig:
     extends MatrixClient {
 
   override def send(
-    request: Request
+    request: JsonRequest
   ): IO[MatrixError, Json] =
     for {
       config <- matrixConfig.get

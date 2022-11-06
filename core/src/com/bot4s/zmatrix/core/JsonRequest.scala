@@ -7,28 +7,7 @@ import io.circe.Json
 import sttp.client3._
 import sttp.client3.circe._
 import sttp.client3.{ Request => HttpRequest }
-import sttp.model.{ MediaType, Method }
-
-sealed trait MatrixBody
-object MatrixBody {
-  case object EmptyBody                                          extends MatrixBody
-  case class JsonBody(json: Json)                                extends MatrixBody
-  case class ByteBody(body: Array[Byte], contentType: MediaType) extends MatrixBody
-
-  val empty = EmptyBody
-}
-sealed trait RequestAuth
-object RequestAuth {
-  case object NoAuth                  extends RequestAuth
-  case class TokenAuth(token: String) extends RequestAuth
-}
-
-sealed trait ApiScope
-
-object ApiScope {
-  case object Client extends ApiScope
-  case object Media  extends ApiScope
-}
+import sttp.model.Method
 
 /*
   As of now the request class is as simple as it could be
@@ -40,7 +19,7 @@ object ApiScope {
   other kind of body, we would have to deal with `ResponseAs` and other
   pretty complexe topic that I don't want to introduce unless required
  */
-final case class Request(
+final case class JsonRequest(
   method: Method,
   path: Seq[String],
   body: MatrixBody = EmptyBody,
@@ -48,6 +27,12 @@ final case class Request(
   auth: RequestAuth = RequestAuth.NoAuth,
   scope: ApiScope = ApiScope.Client
 ) {
+
+  def withScope(scope: ApiScope)                = copy(scope = scope)
+  def withAuth(auth: RequestAuth)               = copy(auth = auth)
+  def addParam(param: (String, Option[String])) = copy(params = params :+ param)
+
+  def body(body: MatrixBody) = copy(body = body)
 
   def toRequest(
     baseUri: String
@@ -84,9 +69,9 @@ final case class Request(
   }
 }
 
-object Request {
+object JsonRequest {
 
-  def make(method: Method, path: Seq[String], body: MatrixBody = MatrixBody.empty): Request =
-    Request(method, path, body)
+  def make(method: Method, path: Seq[String], body: MatrixBody = MatrixBody.empty): JsonRequest =
+    JsonRequest(method, path, body)
 
 }

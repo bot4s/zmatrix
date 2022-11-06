@@ -3,7 +3,7 @@ package com.bot4s.zmatrix.client
 import zio.{ URIO, ZIO }
 
 import com.bot4s.zmatrix._
-import com.bot4s.zmatrix.core.{ ApiScope, MatrixBody, Request }
+import com.bot4s.zmatrix.core.{ ApiScope, MatrixBody, JsonRequest }
 import io.circe.Json
 import sttp.model.{ MediaType, Method }
 
@@ -15,7 +15,7 @@ import sttp.model.{ MediaType, Method }
 trait MatrixRequests {
 
   def get(path: Seq[String]) =
-    Request(Method.GET, path)
+    JsonRequest(Method.GET, path)
 
   def postJson(path: Seq[String], body: Json) =
     sendJson(Method.POST, path, body)
@@ -31,11 +31,11 @@ trait MatrixRequests {
     this might need a refactor in the future, but as of now,
     it can not be used to send another file
    */
-  def uploadMediaFile(content: Array[Byte], contentType: MediaType): Request =
-    Request(Method.POST, Seq("upload"), MatrixBody.ByteBody(content, contentType))
+  def uploadMediaFile(content: Array[Byte], contentType: MediaType): JsonRequest =
+    JsonRequest(Method.POST, Seq("upload"), MatrixBody.ByteBody(content, contentType))
       .copy(scope = ApiScope.Media)
 
-  def withSince(request: Request): URIO[AuthMatrixEnv, Request] =
+  def withSince(request: JsonRequest): URIO[AuthMatrixEnv, JsonRequest] =
     ZIO.serviceWithZIO[SyncTokenConfiguration] { config =>
       config.get.map { config =>
         request.copy(params = request.params :+ ("since", config.since))
@@ -43,5 +43,5 @@ trait MatrixRequests {
     }
 
   private def sendJson(method: Method, path: Seq[String], body: Json) =
-    Request(method, path).copy(body = MatrixBody.JsonBody(body.deepDropNullValues))
+    JsonRequest(method, path).copy(body = MatrixBody.JsonBody(body.deepDropNullValues))
 }
