@@ -16,10 +16,10 @@ package object api extends MatrixRequests with MatrixParser {
       decoded  <- as(response)(decoder)
     } yield decoded
 
-  def sendWithAuth[T](action: JsonRequest)(implicit decoder: Decoder[T]): ZIO[AuthMatrixEnv, MatrixError, T] =
+  def sendWithAuth[T](request: JsonRequest)(implicit decoder: Decoder[T]): ZIO[AuthMatrixEnv, MatrixError, T] =
     for {
       token    <- Authentication.accessToken
-      request   = action.copy(auth = TokenAuth(token.token))
-      response <- send(request)
+      withAuth  = request.withAuth(TokenAuth(token.token))
+      response <- send(withAuth)
     } yield response
 }

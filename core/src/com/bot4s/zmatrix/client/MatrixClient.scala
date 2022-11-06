@@ -37,7 +37,6 @@ final case class LiveMatrixClient(backend: SttpBackend[Task, Any], matrixConfig:
       prefix = request.scope match {
                  case ApiScope.Client => config.matrix.clientApi
                  case ApiScope.Media  => config.matrix.mediaApi
-
                }
       httpRequest = request.toRequest(prefix)
       _          <- ZIO.logDebug(httpRequest.toCurl)

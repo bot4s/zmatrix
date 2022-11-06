@@ -13,7 +13,7 @@ trait ExampleApp[T] extends zio.ZIOAppDefault {
   override def run: ZIO[Environment, Any, ExitCode] =
     (Authentication.refresh *> runExample.withAutoRefresh
       .tapError(error => ZIO.logError(error.toString()))
-      .retry(Schedule.forever)).exitCode
+      .retry(Schedule.recurs(5))).exitCode
       .provide(
         SyncTokenConfiguration
           .persistent()
