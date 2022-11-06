@@ -7,7 +7,6 @@ object Runner extends ZIOAppDefault {
 
   private def examples = Map(
     "Simple"        -> Simple,
-    "Simple2"       -> Simple2,
     "Upload"        -> Upload,
     "ImageMessage"  -> ImageMessage,
     "SimpleSync"    -> SimpleSync,

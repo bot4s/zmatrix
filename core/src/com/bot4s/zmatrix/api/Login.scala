@@ -4,11 +4,10 @@ import zio.ZIO
 
 import com.bot4s.zmatrix.models.EventType
 import com.bot4s.zmatrix.models.responses._
-import com.bot4s.zmatrix.{ MatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ Matrix, MatrixApiBase, MatrixEnv, MatrixError }
 import io.circe.Json
 
-trait Login {
-
+trait Login { self: MatrixApiBase =>
   def passwordLogin(
     user: String,
     password: String,
@@ -38,7 +37,12 @@ trait Login {
 
     send[LoginResponse](postJson(Seq("login"), json))
   }
-
 }
 
-object login extends Login
+private[zmatrix] trait LoginAccessors {
+  def passwordLogin(user: String, password: String, deviceId: Option[String]) =
+    ZIO.serviceWithZIO[Matrix](_.passwordLogin(user, password, deviceId))
+
+  def tokenLogin(token: String, deviceId: Option[String] = None) =
+    ZIO.serviceWithZIO[Matrix](_.tokenLogin(token, deviceId))
+}

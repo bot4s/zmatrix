@@ -8,11 +8,11 @@ import scala.util.Try
 
 import com.bot4s.zmatrix.MatrixError._
 import com.bot4s.zmatrix.models.MxcUri
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ AuthMatrixEnv, Matrix, MatrixApiBase, MatrixError }
 import sttp.client3._
 import sttp.model.{ MediaType, Method, Uri }
 
-trait Media {
+trait Media { self: MatrixApiBase =>
 
   def upload(file: File, contentType: Option[MediaType]): ZIO[AuthMatrixEnv, MatrixError, MxcUri] = {
     def getContentType = Try(Files.probeContentType(file.toPath())).toOption.flatMap(ct => MediaType.parse(ct).toOption)
@@ -61,4 +61,9 @@ trait Media {
   }
 }
 
-object media extends Media
+private[zmatrix] trait MediaAccessors {
+  def upload(file: File, contentType: Option[MediaType]) =
+    ZIO.serviceWithZIO[Matrix](_.upload(file, contentType))
+  def upload(url: Uri, contentType: Option[MediaType]) =
+    ZIO.serviceWithZIO[Matrix](_.upload(url, contentType))
+}

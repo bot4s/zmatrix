@@ -2,7 +2,6 @@ package com.bot4s.zmatrix.services
 
 import zio._
 
-import com.bot4s.zmatrix.api.login
 import com.bot4s.zmatrix.models.AccessToken
 import com.bot4s.zmatrix.{ MatrixError, _ }
 
@@ -37,7 +36,7 @@ object Authentication {
               def refresh: IO[MatrixError, AccessToken] =
                 (config.matrix.userId, sys.env.get("MATRIX_BOT_PASSWORD")) match {
                   case (Some(userId), Some(password)) =>
-                    login
+                    Matrix
                       .passwordLogin(
                         user = userId,
                         password = password,

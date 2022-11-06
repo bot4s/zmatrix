@@ -6,9 +6,9 @@ import com.bot4s.zmatrix.client.MatrixClient
 import com.bot4s.zmatrix.services.Authentication
 import sttp.client3.httpclient.zio.HttpClientZioBackend
 
-trait ExampleApp[T] extends zio.ZIOAppDefault {
+trait ExampleApp[T] extends ZIOAppDefault {
 
-  def runExample: ZIO[AuthMatrixEnv with Matrix, MatrixError, T]
+  def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
 
   override def run: ZIO[Environment, Any, ExitCode] =
     (Authentication.refresh *> runExample.withAutoRefresh.retry(Schedule.recurs(5)))

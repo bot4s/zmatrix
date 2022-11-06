@@ -3,13 +3,12 @@ package com.bot4s.zmatrix
 import zio.Console._
 import zio._
 
-import com.bot4s.zmatrix.api.{ roomCreation, rooms }
 import com.bot4s.zmatrix.models._
 
 object CreateRoom extends ExampleApp[ExitCode] {
 
   override def runExample: URIO[AuthMatrixEnv, ExitCode] =
-    roomCreation
+    Matrix
       .createRoom(
         RoomCreationData(
           name = Some("Some Test Room"),
@@ -23,7 +22,7 @@ object CreateRoom extends ExampleApp[ExitCode] {
       .flatMap { roomId =>
         ZIO.logInfo(s"Created room with id $roomId") *>
           // roomMembership.invite(roomId, "@exampleUser:matrix.org") *>
-          rooms.sendMsg(roomId, "Welcome to my room")
+          Matrix.sendMsg(roomId, "Welcome to my room")
       }
       .tapError(e => printLineError(e.toString()))
       .flatMap(x => printLine(x.toString()))
