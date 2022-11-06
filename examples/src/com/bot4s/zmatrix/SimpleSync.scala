@@ -2,7 +2,7 @@ package com.bot4s.zmatrix
 
 import zio._
 
-import com.bot4s.zmatrix.api.{ roomMembership, rooms, sync }
+import com.bot4s.zmatrix.api.{ accounts, roomMembership, rooms, sync }
 import com.bot4s.zmatrix.models.InviteEvent._
 import com.bot4s.zmatrix.models.RoomMessageType._
 import com.bot4s.zmatrix.models._
@@ -32,8 +32,8 @@ object SimpleSync extends ExampleApp[Long] {
                      }.updateState()
       } yield nextState
 
-    method
-      .repeat(Schedule.spaced(10.seconds))
+    accounts.whoAmI.debug *>
+      method.repeat(Schedule.spaced(10.seconds))
 
   }
 

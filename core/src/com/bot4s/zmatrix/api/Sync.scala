@@ -9,12 +9,9 @@ trait Sync {
 
   def sync: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
     for {
-      request <- get(Seq("sync"))
-      request <- withSince(request)
-      request <- authenticate(request)
-      result  <- send(request)
-      decoded <- as[SyncState](result)
-    } yield decoded
+      request <- withSince(get(Seq("sync")))
+      result  <- sendWithAuth[SyncState](request)
+    } yield result
 
 }
 
