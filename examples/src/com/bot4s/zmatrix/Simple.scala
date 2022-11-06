@@ -10,7 +10,7 @@ object Simple extends ExampleApp[Unit] {
     (for {
       _     <- accounts.whoAmI.debug
       rooms <- roomMembership.joinedRooms()
-      _     <- printLine(f"I'm a member of all those rooms: ${rooms}")
+      _     <- printLine(f"I'm a member of all those rooms: ${rooms}\n")
     } yield ())
       .tapError(e => printLineError(e.toString()))
       .refineOrDie { case x: MatrixError => x }
