@@ -1,20 +1,22 @@
 package com.bot4s.zmatrix
 
 import zio.Console._
-import zio.{ ExitCode, Schedule, ZIO, ZIOAppArgs }
+import zio._
 
-object Runner extends zio.ZIOAppDefault {
+object Runner extends ZIOAppDefault {
 
   private def examples = Map(
-    "Simple"       -> Simple,
-    "Upload"       -> Upload,
-    "ImageMessage" -> ImageMessage,
-    "SimpleSync"   -> SimpleSync,
-    "CreateRoom"   -> CreateRoom
+    "Simple"        -> Simple,
+    "Upload"        -> Upload,
+    "ImageMessage"  -> ImageMessage,
+    "SimpleSync"    -> SimpleSync,
+    "CreateRoom"    -> CreateRoom,
+    "ClearSessions" -> ClearSessions
   )
 
-  override def run: ZIO[Environment with ZIOAppArgs, Any, ExitCode] = {
-    val examplesStr = examples.keySet.mkString(start = "Available examples:\n\t", sep = "\n\t", end = "\n> ")
+  def run = {
+    val examplesStr =
+      examples.keySet.mkString(start = "Available examples (ctrl-c to exit):\n\t", sep = "\n\t", end = "\n> ")
     (for {
       _     <- print(examplesStr)
       input <- readLine
@@ -23,7 +25,7 @@ object Runner extends zio.ZIOAppDefault {
                    .mapError(_ => new Exception(s"Example '$input' does not exist"))
                    .tapError(e => printLineError(e.getMessage()))
       runnable <- example.run
-    } yield runnable).retry(Schedule.forever)
+    } yield runnable).retry(Schedule.forever).repeat(Schedule.forever)
   }
 
 }

@@ -3,19 +3,16 @@ package com.bot4s.zmatrix.api
 import zio.ZIO
 
 import com.bot4s.zmatrix.models.responses.SyncState
-import com.bot4s.zmatrix.{ AuthMatrixEnv, MatrixError }
+import com.bot4s.zmatrix.{ AuthMatrixEnv, Matrix, MatrixApiBase, MatrixError }
 
-trait Sync {
-
+trait Sync { self: MatrixApiBase =>
   def sync: ZIO[AuthMatrixEnv, MatrixError, SyncState] =
     for {
-      request <- get(Seq("sync"))
-      request <- withSince(request)
-      request <- authenticate(request)
-      result  <- send(request)
-      decoded <- as[SyncState](result)
-    } yield decoded
-
+      request <- withSince(get(Seq("sync")))
+      result  <- sendWithAuth[SyncState](request)
+    } yield result
 }
 
-object sync extends Sync
+private[zmatrix] trait SyncAccessors {
+  def sync = ZIO.serviceWithZIO[Matrix](_.sync)
+}

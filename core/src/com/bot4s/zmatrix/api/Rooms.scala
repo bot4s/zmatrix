@@ -7,9 +7,10 @@ import java.util.UUID
 import com.bot4s.zmatrix.models.RoomMessageType._
 import com.bot4s.zmatrix.models.responses.EventResponse
 import com.bot4s.zmatrix.models.{ EventType, RoomId, RoomMessageType }
+import com.bot4s.zmatrix.{ Matrix, MatrixApiBase }
 import io.circe.syntax._
 
-trait Rooms {
+trait Rooms { self: MatrixApiBase =>
 
   /*
    * Send a message event to a room
@@ -35,4 +36,9 @@ trait Rooms {
 
 }
 
-object rooms extends Rooms
+private[zmatrix] trait RoomAccessors {
+  def sendEvent(roomId: RoomId, messsageEvent: RoomMessageType) =
+    ZIO.serviceWithZIO[Matrix](_.sendEvent(roomId, messsageEvent))
+  def sendMsg(roomId: RoomId, message: String) =
+    ZIO.serviceWithZIO[Matrix](_.sendMsg(roomId, message))
+}
