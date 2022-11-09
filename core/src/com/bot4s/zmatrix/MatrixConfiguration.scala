@@ -9,6 +9,7 @@ import pureconfig.generic.auto._
 final case class Config(
   matrix: MatrixConfigurationContent
 )
+
 final case class MatrixConfigurationContent(
   homeServer: String,
   apiPrefix: String = MatrixConfiguration.DEFAULT_API_PREFIX,

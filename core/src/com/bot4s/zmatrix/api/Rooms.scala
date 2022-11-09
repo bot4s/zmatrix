@@ -1,6 +1,7 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
+import zio.json._
 
 import java.util.UUID
 
@@ -8,7 +9,6 @@ import com.bot4s.zmatrix.models.RoomMessageType._
 import com.bot4s.zmatrix.models.responses.EventResponse
 import com.bot4s.zmatrix.models.{ EventType, RoomId, RoomMessageType }
 import com.bot4s.zmatrix.{ Matrix, MatrixApiBase }
-import io.circe.syntax._
 
 trait Rooms { self: MatrixApiBase =>
 
@@ -18,11 +18,11 @@ trait Rooms { self: MatrixApiBase =>
    * https://spec.matrix.org/latest/client-server-api/#mtext
    */
   def sendEvent(roomId: RoomId, messageEvent: RoomMessageType) =
-    ZIO.logDebug(messageEvent.asJson.toString()) *>
+    ZIO.logDebug(messageEvent.toJson) *>
       sendWithAuth[EventResponse](
         putJson(
           Seq("rooms", roomId.id, "send", EventType.roomMessages.toString(), UUID.randomUUID().toString()),
-          messageEvent.asJson
+          messageEvent
         )
       )
 
@@ -30,7 +30,7 @@ trait Rooms { self: MatrixApiBase =>
     sendWithAuth[EventResponse](
       putJson(
         Seq("rooms", roomId.id, "send", EventType.roomMessages.toString(), UUID.randomUUID().toString()),
-        RoomMessageTextContent(message).asJson
+        RoomMessageTextContent(message)
       )
     )
 

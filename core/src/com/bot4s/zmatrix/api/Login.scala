@@ -1,11 +1,11 @@
 package com.bot4s.zmatrix.api
 
 import zio.ZIO
+import zio.json.ast.Json
 
 import com.bot4s.zmatrix.models.EventType
 import com.bot4s.zmatrix.models.responses._
 import com.bot4s.zmatrix.{ Matrix, MatrixApiBase, MatrixEnv, MatrixError }
-import io.circe.Json
 
 trait Login { self: MatrixApiBase =>
   def passwordLogin(
@@ -14,13 +14,12 @@ trait Login { self: MatrixApiBase =>
     deviceId: Option[String]
   ) = {
     val json = Json
-      .obj(
-        "type"      -> Json.fromString(EventType.passwordLogin.toString()),
-        "user"      -> Json.fromString(user),
-        "password"  -> Json.fromString(password),
-        "device_id" -> deviceId.map(Json.fromString(_)).getOrElse(Json.Null)
+      .Obj(
+        "type"      -> Json.Str(EventType.passwordLogin.toString()),
+        "user"      -> Json.Str(user),
+        "password"  -> Json.Str(password),
+        "device_id" -> deviceId.map(Json.Str(_)).getOrElse(Json.Null)
       )
-      .deepDropNullValues
 
     send[LoginResponse](postJson(Seq("login"), json))
   }
@@ -29,10 +28,10 @@ trait Login { self: MatrixApiBase =>
     token: String,
     deviceId: Option[String] = None
   ): ZIO[MatrixEnv, MatrixError, LoginResponse] = {
-    val json = Json.obj(
-      "type"      -> Json.fromString(EventType.tokenLogin.toString()),
-      "token"     -> Json.fromString(token),
-      "device_id" -> deviceId.map(Json.fromString(_)).getOrElse(Json.Null)
+    val json = Json.Obj(
+      "type"      -> Json.Str(EventType.tokenLogin.toString()),
+      "token"     -> Json.Str(token),
+      "device_id" -> deviceId.map(Json.Str(_)).getOrElse(Json.Null)
     )
 
     send[LoginResponse](postJson(Seq("login"), json))

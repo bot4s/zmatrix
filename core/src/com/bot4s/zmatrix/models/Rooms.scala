@@ -1,7 +1,6 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.Decoder
-import io.circe.generic.extras.semiauto._
+import zio.json._
 
 final case class Rooms(
   invite: Option[Map[RoomId, InvitedRoom]],
@@ -16,10 +15,11 @@ final case class InvitedRoom(inviteState: InviteState)
 final case class InviteState(events: List[InviteEvent])
 
 object Rooms {
-  implicit val roomsDecoder: Decoder[Rooms] = deriveConfiguredDecoder
 
-  implicit val joinedRoomDecoder: Decoder[JoinedRoom]             = deriveConfiguredDecoder
-  implicit val joinedRoomEventDecoder: Decoder[RoomEventTimeline] = deriveConfiguredDecoder
-  implicit val invitedRoomDecoder: Decoder[InvitedRoom]           = deriveConfiguredDecoder
-  implicit val invitedRoomStateDecoder: Decoder[InviteState]      = deriveConfiguredDecoder
+  implicit lazy val joinedRoomEventDecoder: JsonDecoder[RoomEventTimeline] = DeriveJsonDecoder.gen
+  implicit lazy val joinedRoomDecoder: JsonDecoder[JoinedRoom]             = DeriveJsonDecoder.gen
+  implicit lazy val invitedRoomStateDecoder: JsonDecoder[InviteState]      = DeriveJsonDecoder.gen
+  implicit lazy val invitedRoomDecoder: JsonDecoder[InvitedRoom]           = DeriveJsonDecoder.gen
+
+  implicit lazy val roomsDecoder: JsonDecoder[Rooms] = DeriveJsonDecoder.gen
 }

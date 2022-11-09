@@ -1,9 +1,8 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.Decoder
-import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
+import zio.json._
 
-final case class MxcUri(contentUri: String) {
+final case class MxcUri(@jsonField("content_uri") contentUri: String) {
   val (serverName, mediaId) = {
     val parts = contentUri.replace("mxc://", "").split("/").toList
     parts match {
@@ -14,5 +13,5 @@ final case class MxcUri(contentUri: String) {
 }
 
 object MxcUri {
-  implicit val mxcuriDecoder: Decoder[MxcUri] = deriveConfiguredDecoder
+  implicit val mxcuriDecoder: JsonDecoder[MxcUri] = DeriveJsonDecoder.gen
 }

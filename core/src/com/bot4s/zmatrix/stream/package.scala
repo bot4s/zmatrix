@@ -3,6 +3,7 @@ package com.bot4s.zmatrix
 import zio._
 import zio.stream._
 
+import com.bot4s.zmatrix
 import com.bot4s.zmatrix.models._
 import com.bot4s.zmatrix.models.responses.SyncState
 
@@ -93,7 +94,8 @@ package object stream {
     inviteEvents >>> onEventZIO(pf)
 
   val filterBotMessage = {
-    val fromBot = (config: Config, sender: String) => config.matrix.userId.exists(name => sender.startsWith(s"@$name"))
+    val fromBot = (config: zmatrix.Config, sender: String) =>
+      config.matrix.userId.exists(name => sender.startsWith(s"@$name"))
     ZPipeline.mapZIO[AuthMatrixEnv, MatrixError, AssociatedEvents[MessageEvent], AssociatedEvents[MessageEvent]] {
       case (roomId, events) =>
         for {
