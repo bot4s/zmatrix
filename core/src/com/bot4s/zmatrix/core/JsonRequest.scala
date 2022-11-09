@@ -1,11 +1,12 @@
 package com.bot4s.zmatrix.core
 
+import zio.json.ast.Json
+
 import com.bot4s.zmatrix.MatrixError
 import com.bot4s.zmatrix.core.MatrixBody.EmptyBody
 import com.bot4s.zmatrix.core.RequestAuth._
-import io.circe.Json
 import sttp.client3._
-import sttp.client3.circe._
+import sttp.client3.ziojson._
 import sttp.client3.{ Request => HttpRequest }
 import sttp.model.Method
 
@@ -41,10 +42,11 @@ final case class JsonRequest(
       case EmptyBody =>
         basicRequest
           .method(method, uri"$baseUri/$path")
-      case MatrixBody.JsonBody(json) =>
+      case body @ MatrixBody.JsonBody(json) =>
+        implicit val encoder = body.encoder
         basicRequest
           .method(method, uri"$baseUri/$path")
-          .body(json.deepDropNullValues)
+          .body(json)
       case MatrixBody.ByteBody(body, contentType) =>
         basicRequest
           .method(method, uri"$baseUri/$path")

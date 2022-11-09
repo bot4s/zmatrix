@@ -1,11 +1,11 @@
 package com.bot4s.zmatrix.client
 
+import zio.json.ast.Json
 import zio.{ IO, Task, URLayer, ZIO, ZLayer }
 
 import com.bot4s.zmatrix.MatrixError.NetworkError
 import com.bot4s.zmatrix._
 import com.bot4s.zmatrix.core.{ ApiScope, JsonRequest }
-import io.circe.Json
 import sttp.client3._
 
 /**

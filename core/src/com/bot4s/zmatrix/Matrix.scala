@@ -1,24 +1,24 @@
 package com.bot4s.zmatrix
 
 import zio._
+import zio.json.JsonDecoder
 
 import com.bot4s.zmatrix.api._
 import com.bot4s.zmatrix.client._
 import com.bot4s.zmatrix.core.JsonRequest
 import com.bot4s.zmatrix.core.RequestAuth._
 import com.bot4s.zmatrix.services.Authentication
-import io.circe._
 
 trait MatrixApiBase extends MatrixRequests with MatrixParser {
   def client: MatrixClient
 
-  def send[T](request: JsonRequest)(implicit decoder: Decoder[T]): IO[MatrixError, T] =
+  def send[T](request: JsonRequest)(implicit decoder: JsonDecoder[T]): IO[MatrixError, T] =
     for {
       response <- client.send(request)
       decoded  <- as(response)(decoder)
     } yield decoded
 
-  def sendWithAuth[T](request: JsonRequest)(implicit decoder: Decoder[T]): ZIO[AuthMatrixEnv, MatrixError, T] =
+  def sendWithAuth[T](request: JsonRequest)(implicit decoder: JsonDecoder[T]): ZIO[AuthMatrixEnv, MatrixError, T] =
     for {
       token    <- Authentication.accessToken
       withAuth  = request.withAuth(TokenAuth(token.token))

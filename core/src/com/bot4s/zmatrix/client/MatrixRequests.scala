@@ -1,10 +1,10 @@
 package com.bot4s.zmatrix.client
 
+import zio.json.JsonEncoder
 import zio.{ URIO, ZIO }
 
 import com.bot4s.zmatrix._
 import com.bot4s.zmatrix.core.{ ApiScope, JsonRequest, MatrixBody }
-import io.circe.Json
 import sttp.model.{ MediaType, Method }
 
 /**
@@ -17,14 +17,14 @@ trait MatrixRequests {
   def get(path: Seq[String]) =
     JsonRequest(Method.GET, path)
 
-  def postJson(path: Seq[String], body: Json) =
+  def postJson[T: JsonEncoder](path: Seq[String], body: T) =
     sendJson(Method.POST, path, body)
 
-  def putJson(path: Seq[String], body: Json) =
+  def putJson[T: JsonEncoder](path: Seq[String], body: T) =
     sendJson(Method.PUT, path, body)
 
   def post(path: Seq[String]) =
-    postJson(path, Json.obj())
+    JsonRequest(Method.POST, path, MatrixBody.EmptyBody)
 
   /*
     This method is a bit specific as it is only for `media` file
@@ -41,6 +41,6 @@ trait MatrixRequests {
       }
     }
 
-  private def sendJson(method: Method, path: Seq[String], body: Json) =
-    JsonRequest(method, path, MatrixBody.JsonBody(body.deepDropNullValues))
+  private def sendJson[T: JsonEncoder](method: Method, path: Seq[String], body: T) =
+    JsonRequest(method, path, MatrixBody.JsonBody(body))
 }
