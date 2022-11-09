@@ -9,8 +9,8 @@ import com.goyeau.mill.scalafix.ScalafixModule
 object Versions {
   val zioLoggingVersion     = "2.1.3"
   val zioVersion            = "2.0.2"
+  val zioJsonVersion        = "0.3.0"
   val sttpVersion           = "3.8.3"
-  val circeVersion          = "0.14.3"
   val pureConfigVersion     = "0.17.2"
   val scalafixModuleVersion = "0.6.0"
 }
@@ -45,13 +45,12 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
+    ivy"dev.zio::zio-json:${zioJsonVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::circe:${sttpVersion}",
+    ivy"com.softwaremill.sttp.client3::zio-json:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
     ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
-    ivy"io.circe::circe-generic:${circeVersion}",
-    ivy"io.circe::circe-generic-extras:${circeVersion}",
     // https://github.com/com-lihaoyi/mill/issues/1797
     ivy"org.scala-lang:scala-reflect:${crossScalaVersion}"
   )
