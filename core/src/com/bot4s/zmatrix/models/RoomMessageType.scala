@@ -1,8 +1,7 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.generic.extras.semiauto._
-import io.circe.syntax._
-import io.circe.{ Decoder, DecodingFailure, Encoder, Json }
+import zio.json._
+import zio.json.ast._
 
 // https://spec.matrix.org/latest/client-server-api/#mroommessage-msgtypes
 sealed trait RoomMessageType {
@@ -19,7 +18,7 @@ object RoomMessageType {
   final case class RoomMessageTextContent(
     body: String,
     format: Option[String] = None,
-    formattedBody: Option[String] = None
+    @jsonField("formatted_body") formattedBody: Option[String] = None
   ) extends RoomMessageType {
     val msgtype: String = "m.text"
   }
@@ -32,30 +31,43 @@ object RoomMessageType {
     val msgtype: String = "m.image"
   }
 
-  implicit val textContentEncoder: Encoder[RoomMessageTextContent] = Encoder.instance { textContent =>
-    val innerTextContentEncoder = deriveConfiguredEncoder[RoomMessageTextContent]
-    textContent.asJson(innerTextContentEncoder).deepMerge(Json.obj(("msgtype", Json.fromString(textContent.msgtype))))
+  // I can't think of a reason for the inner `toJsonAst` call to fail, but we still default to an empty object
+  implicit val messageTypeEncoder = Json.encoder.contramap[RoomMessageType] {
+    case text: RoomMessageTextContent    => text.toJsonAST.getOrElse(Json.Obj())
+    case img: RoomMessageImageContent    => img.toJsonAST.getOrElse(Json.Obj())
+    case redacted: RoomMessageEmpty.type => redacted.toJsonAST.getOrElse(Json.Obj())
   }
-  implicit val textContentDecoder: Decoder[RoomMessageTextContent] = deriveConfiguredDecoder
 
-  implicit val imageContentEncoder: Encoder[RoomMessageImageContent] = Encoder.instance { imgContent =>
-    val innerImageContentEncoder = deriveConfiguredEncoder[RoomMessageImageContent]
-    imgContent.asJson(innerImageContentEncoder).deepMerge(Json.obj(("msgtype", Json.fromString(imgContent.msgtype))))
-  }
-  implicit val imageContentDecoder: Decoder[RoomMessageImageContent] = deriveConfiguredDecoder
+  implicit val roomTextContentDecoder: JsonDecoder[RoomMessageTextContent] =
+    DeriveJsonDecoder.gen[RoomMessageTextContent]
+  implicit val roomImageContentDecoder: JsonDecoder[RoomMessageImageContent] =
+    DeriveJsonDecoder.gen[RoomMessageImageContent]
 
-  implicit val emptyMessageEncoder = deriveConfiguredEncoder[RoomMessageEmpty.type]
-
-  implicit val messageTypeEncoder: Encoder[RoomMessageType] = Encoder.instance {
-    case text: RoomMessageTextContent    => text.asJson
-    case img: RoomMessageImageContent    => img.asJson
-    case redacted: RoomMessageEmpty.type => redacted.asJson
-  }
-  implicit val messageTypeDecoder: Decoder[RoomMessageType] = c =>
-    c.downField("msgtype").as[String].left.flatMap(_ => Right("")).flatMap {
-      case "m.text"  => c.as[RoomMessageTextContent]
-      case "m.image" => c.as[RoomMessageImageContent]
-      case ""        => Right(RoomMessageEmpty)
-      case msgtype   => Left(DecodingFailure(s"$msgtype is not supported", Nil))
+  implicit val roomMessageTypeDecoder = JsonDecoder[Json].mapOrFail { json =>
+    json.get(JsonCursor.field("msgtype")).flatMap(_.as[String]).left.flatMap(_ => Right("")).flatMap {
+      case "m.text"  => json.as[RoomMessageTextContent]
+      case "m.image" => json.as[RoomMessageImageContent]
+      case ""        => Right[String, RoomMessageType](RoomMessageEmpty)
+      case msgtype   => Left[String, RoomMessageType](s"$msgtype is not supported")
     }
+  }
+
+  implicit val roomMessageEmptyEncoder: JsonEncoder[RoomMessageEmpty.type] =
+    DeriveJsonEncoder.gen[RoomMessageEmpty.type]
+
+  implicit val roomTextContentEncoder: JsonEncoder[RoomMessageTextContent] =
+    Json.encoder.contramap[RoomMessageTextContent] { message =>
+      val json = DeriveJsonEncoder.gen[RoomMessageTextContent].toJsonAST(message)
+      json
+        .map(_.merge(Json.Obj("msgtype" -> Json.Str(message.msgtype))))
+        .getOrElse(Json.Obj())
+    }
+  implicit val roomImageContentEncoder: JsonEncoder[RoomMessageImageContent] =
+    Json.encoder.contramap[RoomMessageImageContent] { message =>
+      val json = DeriveJsonEncoder.gen[RoomMessageImageContent].toJsonAST(message)
+      json
+        .map(_.merge(Json.Obj("msgtype" -> Json.Str(message.msgtype))))
+        .getOrElse(Json.Obj())
+    }
+
 }

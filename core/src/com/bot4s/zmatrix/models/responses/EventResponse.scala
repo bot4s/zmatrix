@@ -1,11 +1,9 @@
 package com.bot4s.zmatrix.models.responses
 
-import com.bot4s.zmatrix.models._
-import io.circe.Decoder
-import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
+import zio.json._
 
-final case class EventResponse(eventId: String)
+final case class EventResponse(@jsonField("event_id") eventId: String)
 
 object EventResponse {
-  implicit val decoder: Decoder[EventResponse] = deriveConfiguredDecoder
+  implicit val decoder: JsonDecoder[EventResponse] = DeriveJsonDecoder.gen
 }
