@@ -1,7 +1,7 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.generic.extras.semiauto._
-import io.circe.{ Decoder, Json }
+import zio.json._
+import zio.json.ast._
 
 import RoomMessageType._
 
@@ -17,12 +17,14 @@ import RoomMessageType._
 sealed trait RoomEvent
 
 // m.room.message event
-final case class MessageEvent(sender: String, eventId: String, content: RoomMessageType) extends RoomEvent {
+final case class MessageEvent(sender: String, @jsonField("event_id") eventId: String, content: RoomMessageType)
+    extends RoomEvent {
   val `type`: String = "m.room.message"
 }
 
 // m.room.topic event
-final case class TopicEvent(sender: String, eventId: String, content: TopicMessageContent) extends RoomEvent {
+final case class TopicEvent(sender: String, @jsonField("event_id") eventId: String, content: TopicMessageContent)
+    extends RoomEvent {
   val `type`: String = "m.room.topic"
 }
 final case class TopicMessageContent(topic: String)
@@ -33,19 +35,16 @@ object RoomEvent {
     content: Json
   ) extends RoomEvent
 
-  implicit val roomMessageDecoder: Decoder[MessageEvent]                = deriveConfiguredDecoder
-  implicit val topicMessageDecoder: Decoder[TopicEvent]                 = deriveConfiguredDecoder
-  implicit val topicMessageContentDecoder: Decoder[TopicMessageContent] = deriveConfiguredDecoder
+  implicit val roomMessageDecoder: JsonDecoder[MessageEvent]                = DeriveJsonDecoder.gen[MessageEvent]
+  implicit val topicMessageContentDecoder: JsonDecoder[TopicMessageContent] = DeriveJsonDecoder.gen[TopicMessageContent]
+  implicit val topicMessageDecoder: JsonDecoder[TopicEvent]                 = DeriveJsonDecoder.gen[TopicEvent]
 
-  /* Those decoder are used by the sync state */
-  implicit val roomEventDecoder: Decoder[RoomEvent] = c =>
-    c.downField("type").as[String].flatMap { label =>
-      label match {
-        case "m.room.message" => c.as[MessageEvent]
-        case "m.room.topic"   => c.as[TopicEvent]
-        case "m.room.member"  => Right(UnknownEvent(label, c.value)) // another kind of room message, as a placeholder
-        case _                => Right(UnknownEvent(label, c.value))
-      }
+  implicit val roomEventDecoder = JsonDecoder[Json].mapOrFail { json =>
+    json.get(JsonCursor.field("type")).flatMap(_.as[String]).flatMap {
+      case "m.room.message" => json.as[MessageEvent]
+      case "m.room.topic"   => json.as[TopicEvent]
+      case label            => Right[String, RoomEvent](UnknownEvent(label, json))
     }
+  }
 
 }

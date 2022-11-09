@@ -1,19 +1,21 @@
 package com.bot4s.zmatrix.models
 
-import io.circe.generic.extras.semiauto._
-import io.circe.{ Decoder, Encoder, KeyDecoder }
+import zio.json._
 
 final case class RoomId(id: String) extends AnyVal
 
 object RoomId {
 
-  implicit val roomIdDecoder: Decoder[RoomId] =
-    deriveConfiguredDecoder[RoomId] or Decoder[String].map(x => RoomId(x))
+  implicit val roomIdDecoder: JsonDecoder[RoomId] =
+    DeriveJsonDecoder.gen[RoomId] orElse JsonDecoder[String].map(RoomId.apply)
 
-  implicit val roomIdEncoder: Encoder[RoomId] =
-    deriveConfiguredEncoder[RoomId]
+  implicit val roomIdEncoder: JsonEncoder[RoomId] =
+    DeriveJsonEncoder.gen[RoomId]
 
-  implicit val roomIdKeyDecoder: KeyDecoder[RoomId] =
-    key => Some(RoomId(key))
+  implicit val roomIdKeyEncoder: JsonFieldEncoder[RoomId] =
+    JsonFieldEncoder.string.contramap[RoomId](_.id)
+
+  implicit val roomIdKeyDecoder: JsonFieldDecoder[RoomId] =
+    JsonFieldDecoder.string.map(RoomId.apply)
 
 }
