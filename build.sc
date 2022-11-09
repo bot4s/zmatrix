@@ -8,14 +8,14 @@ import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
   val zioLoggingVersion     = "2.1.3"
-  val zioVersion            = "2.0.2"
+  val zioVersion            = "2.0.3"
   val zioJsonVersion        = "0.3.0"
   val sttpVersion           = "3.8.3"
   val pureConfigVersion     = "0.17.2"
   val scalafixModuleVersion = "0.6.0"
 }
 
-val scalaVersions = List("2.12.16", "2.13.10")
+val scalaVersions = List("2.12.17", "2.13.10")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
