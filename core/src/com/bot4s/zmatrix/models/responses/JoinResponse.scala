@@ -1,13 +1,13 @@
 package com.bot4s.zmatrix.models.responses
 
+import zio.json._
+
 import com.bot4s.zmatrix.models._
-import io.circe.Decoder
-import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 
 final case class JoinResponse(
-  roomId: RoomId
+  @jsonField("room_id") roomId: RoomId
 )
 
 object JoinResponse {
-  implicit val decoder: Decoder[JoinResponse] = deriveConfiguredDecoder
+  implicit val decoder: JsonDecoder[JoinResponse] = DeriveJsonDecoder.gen
 }

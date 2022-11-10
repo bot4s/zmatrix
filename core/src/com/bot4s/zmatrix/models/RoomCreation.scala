@@ -1,15 +1,14 @@
 package com.bot4s.zmatrix.models
-import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto.{ deriveConfiguredDecoder, deriveConfiguredEncoder }
-import io.circe.{ Decoder, Encoder }
+
+import zio.json._
 
 object Visibility extends Enumeration {
   type Visibility = Value
   val publicRoom  = Value("public")
   val privateRoom = Value("private")
 
-  implicit val visibilityDecoder: Decoder[Visibility.Value] = Decoder.decodeEnumeration(Visibility)
-  implicit val visibilityEncoder: Encoder[Visibility.Value] = Encoder.encodeEnumeration(Visibility)
+  implicit val encoder: JsonEncoder[Visibility.Value] = JsonEncoder[String].contramap(_.toString)
+  implicit val decoder: JsonDecoder[Visibility.Value] = JsonDecoder[String].map(Visibility.withName)
 }
 
 object Preset extends Enumeration {
@@ -18,8 +17,8 @@ object Preset extends Enumeration {
   val publicChat         = Value("public_chat")
   val trustedPrivateChat = Value("trusted_private_chat")
 
-  implicit val presetDecoder: Decoder[Preset.Value] = Decoder.decodeEnumeration(Preset)
-  implicit val presetEncoder: Encoder[Preset.Value] = Encoder.encodeEnumeration(Preset)
+  implicit val encoder: JsonEncoder[Preset.Value] = JsonEncoder[String].contramap(_.toString)
+  implicit val decoder: JsonDecoder[Preset.Value] = JsonDecoder[String].map(Preset.withName)
 }
 
 /**
@@ -27,18 +26,17 @@ object Preset extends Enumeration {
  */
 final case class RoomCreationData(
   visibility: Option[Visibility.Visibility] = None,
-  roomAliasName: Option[String] = None,
+  @jsonField("room_alias_name") roomAliasName: Option[String] = None,
   name: Option[String] = None,
   topic: Option[String] = None,
   invite: Option[List[String]] = None,
-  roomVersion: Option[String] = None,
+  @jsonField("room_version") roomVersion: Option[String] = None,
   preset: Option[Preset.Preset] = None,
-  isDirect: Option[Boolean] = None
+  @jsonField("is_direct") isDirect: Option[Boolean] = None
 )
 
 object RoomCreationData {
-  implicit val customConfig: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val roomCreationDataEncoder: Encoder[RoomCreationData] = deriveConfiguredEncoder
-  implicit val roomCreationDataDecoder: Decoder[RoomCreationData] = deriveConfiguredDecoder
+  implicit val roomCreationDataEncoder: JsonEncoder[RoomCreationData] = DeriveJsonEncoder.gen[RoomCreationData]
+  implicit val roomCreationDataDecoder: JsonDecoder[RoomCreationData] = DeriveJsonDecoder.gen[RoomCreationData]
 }
