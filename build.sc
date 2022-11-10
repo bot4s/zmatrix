@@ -10,6 +10,7 @@ object Versions {
   val zioLoggingVersion     = "2.1.3"
   val zioVersion            = "2.0.3"
   val zioJsonVersion        = "0.3.0"
+  val zioConfigVersion      = "3.0.2"
   val sttpVersion           = "3.8.3"
   val pureConfigVersion     = "0.17.2"
   val scalafixModuleVersion = "0.6.0"
@@ -46,13 +47,13 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
     ivy"dev.zio::zio-json:${zioJsonVersion}",
+    ivy"dev.zio::zio-config:${zioConfigVersion}",
+    ivy"dev.zio::zio-config-magnolia:${zioConfigVersion}",
+    ivy"dev.zio::zio-config-typesafe:${zioConfigVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio-json:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
-    ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
-    // https://github.com/com-lihaoyi/mill/issues/1797
-    ivy"org.scala-lang:scala-reflect:${crossScalaVersion}"
+    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}"
   )
 
   override def scalacOptions = Seq(

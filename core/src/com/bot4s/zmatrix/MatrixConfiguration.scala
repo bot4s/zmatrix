@@ -1,14 +1,19 @@
 package com.bot4s.zmatrix
 
 import zio._
+import zio.config._
+import zio.config.magnolia._
+import zio.config.typesafe._
 
-import pureconfig.ConfigSource
-import pureconfig.error.ConfigReaderFailures
-import pureconfig.generic.auto._
+import java.io.{ File, FileNotFoundException }
+import java.net.URL
 
-final case class Config(
+import com.typesafe.config.{ ConfigFactory, ConfigParseOptions }
+
+final case class MatrixConfiguration(
   matrix: MatrixConfigurationContent
 )
+
 final case class MatrixConfigurationContent(
   homeServer: String,
   apiPrefix: String = MatrixConfiguration.DEFAULT_API_PREFIX,
@@ -21,31 +26,47 @@ final case class MatrixConfigurationContent(
   val mediaApi  = f"${homeServer}${apiPrefix}/media/${apiVersion}"
 }
 
-/**
- */
-trait MatrixConfiguration {
-  def get: UIO[Config]
-}
-
 object MatrixConfiguration {
 
   val DEFAULT_API_PREFIX  = "/_matrix"
   val DEFAULT_API_VERSION = "v3"
   val DEFAULT_CONFIG_FILE = "bot.conf"
 
-  def get: URIO[MatrixConfiguration, Config] = ZIO.serviceWithZIO(_.get)
+  val configReader = descriptor[MatrixConfiguration]
 
-  private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[Config]] =
-    ZIO.fromEither(ConfigSource.resources(filename).load[Config]).flatMap(e => Ref.make(e))
+  def from(filename: String): Task[MatrixConfiguration] =
+    fromFile(filename)
+      .orElse(fromResource(filename))
 
-  /**
-   * Create an in-memory configuration that is not persistent.
-   */
-  def live(filename: String = DEFAULT_CONFIG_FILE): Layer[ConfigReaderFailures, MatrixConfiguration] =
-    ZLayer.fromZIO(refFromFile(filename).map { configRef =>
-      new MatrixConfiguration {
-        override def get: UIO[Config] = configRef.get
-      }
-    })
+  private[this] val strictSettings =
+    ConfigParseOptions.defaults.setAllowMissing(false)
+
+  private def fromHoconFile(url: URL) =
+    read(
+      configReader from ConfigSource.fromTypesafeConfig(
+        ZIO.attempt(ConfigFactory.parseURL(url, strictSettings.setClassLoader(null)))
+      )
+    )
+
+  private def fromResource(filename: String) = {
+    val adapted = if (filename.startsWith("/")) filename else s"/$filename"
+    for {
+      file <- ZIO
+                .attempt(getClass.getResource(adapted).toURI().toURL())
+                .mapError(_ => new FileNotFoundException(s"Unable to find file '$filename'"))
+      config <- fromHoconFile(file)
+    } yield config
+  }
+
+  private def fromFile(filename: String) =
+    for {
+      file <- ZIO
+                .attempt(new File(filename).toURI().toURL())
+                .mapError(_ => new FileNotFoundException(s"Unable to find file '$filename'"))
+      config <- fromHoconFile(file)
+    } yield config
+
+  def live(filename: String = DEFAULT_CONFIG_FILE): TaskLayer[MatrixConfiguration] =
+    ZLayer.fromZIO(from(filename))
 
 }

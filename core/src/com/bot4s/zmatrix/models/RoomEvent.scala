@@ -35,11 +35,11 @@ object RoomEvent {
     content: Json
   ) extends RoomEvent
 
-  implicit val roomMessageDecoder: JsonDecoder[MessageEvent]                = DeriveJsonDecoder.gen[MessageEvent]
-  implicit val topicMessageContentDecoder: JsonDecoder[TopicMessageContent] = DeriveJsonDecoder.gen[TopicMessageContent]
-  implicit val topicMessageDecoder: JsonDecoder[TopicEvent]                 = DeriveJsonDecoder.gen[TopicEvent]
+  implicit val roomMessageDecoder: JsonDecoder[MessageEvent]                = DeriveJsonDecoder.gen
+  implicit val topicMessageContentDecoder: JsonDecoder[TopicMessageContent] = DeriveJsonDecoder.gen
+  implicit val topicMessageDecoder: JsonDecoder[TopicEvent]                 = DeriveJsonDecoder.gen
 
-  implicit val roomEventDecoder = JsonDecoder[Json].mapOrFail { json =>
+  implicit val roomEventDecoder: JsonDecoder[RoomEvent] = JsonDecoder[Json].mapOrFail { json =>
     json.get(JsonCursor.field("type")).flatMap(_.as[String]).flatMap {
       case "m.room.message" => json.as[MessageEvent]
       case "m.room.topic"   => json.as[TopicEvent]
