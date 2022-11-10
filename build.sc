@@ -16,7 +16,7 @@ object Versions {
   val scalafixModuleVersion = "0.6.0"
 }
 
-val scalaVersions = List("2.12.17", "2.13.10")
+val scalaVersions = List("2.12.17", "2.13.10", "3.2.0")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
@@ -34,13 +34,34 @@ trait Publishable extends PublishModule {
   )
 }
 
-trait ExtendedCrossScalaModule extends CrossScalaModule with ScalafixModule {
-  def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
+abstract class ExtendedCrossScalaModule(crossScalaVersion: String) extends CrossScalaModule with ScalafixModule {
+  override def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
+
+  override def scalacOptions = {
+    val specific =
+      if (crossScalaVersion.startsWith("3."))
+        Seq(
+          // https://github.com/zio/zio-json/issues/353
+          "-Yretain-trees"
+        )
+      else
+        Seq("-Ywarn-unused", "-Ywarn-dead-code")
+
+    specific ++ Seq(
+      "-unchecked",
+      "-deprecation",
+      "-language:_",
+      "-encoding",
+      "UTF-8",
+      "-feature"
+    )
+  }
+
 }
 
 object core extends Cross[CoreModule](scalaVersions: _*)
 
-class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule with Publishable {
+class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) with Publishable {
 
   import Versions._
 
@@ -54,18 +75,6 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio-json:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}"
-  )
-
-  override def scalacOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-Ywarn-unused",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-unchecked",
-    "-Ywarn-dead-code"
   )
 
   object test extends Tests with ScalafixModule {
@@ -86,19 +95,8 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
 }
 
 object examples extends Cross[ExamplesModule](scalaVersions: _*)
-class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule {
+class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) {
   val moduleDeps = Seq(core(crossScalaVersion))
-  override def scalacOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-Ywarn-unused",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-unchecked",
-    "-Ywarn-dead-code"
-  )
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }
