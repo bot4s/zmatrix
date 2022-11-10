@@ -50,9 +50,7 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio-json:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
-    ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
-    // https://github.com/com-lihaoyi/mill/issues/1797
-    ivy"org.scala-lang:scala-reflect:${crossScalaVersion}"
+    ivy"com.github.pureconfig::pureconfig-core:${pureConfigVersion}"
   )
 
   override def scalacOptions = Seq(

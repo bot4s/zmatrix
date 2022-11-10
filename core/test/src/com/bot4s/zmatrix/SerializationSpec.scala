@@ -125,7 +125,6 @@ object SerializationSpec extends ZIOSpecDefault {
       },
       test("RoomId") {
         assert(""""test"""".fromJson[RoomId])(isRight(equalTo(RoomId("test"))))
-        assert("""{"id": "test"}""".fromJson[RoomId])(isRight(equalTo(RoomId("test"))))
       },
       test("RoomMessageTextContent") {
         val content = """

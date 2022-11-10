@@ -6,8 +6,7 @@ import java.io.{ BufferedWriter, File, FileWriter }
 
 import com.typesafe.config.ConfigRenderOptions
 import pureconfig.error.ConfigReaderFailures
-import pureconfig.generic.auto._
-import pureconfig.{ ConfigSource, ConfigWriter }
+import pureconfig._
 
 final case class SyncToken(
   since: Option[String] = None
@@ -21,8 +20,12 @@ trait SyncTokenConfiguration {
 object SyncTokenConfiguration {
   val DEFAULT_TOKEN_FILE = "token.conf"
 
-  def get: URIO[SyncTokenConfiguration, SyncToken]               = ZIO.environmentWithZIO(_.get.get)
-  def set(config: SyncToken): URIO[SyncTokenConfiguration, Unit] = ZIO.environmentWithZIO(_.get.set(config))
+  def get: URIO[SyncTokenConfiguration, SyncToken]               = ZIO.serviceWithZIO(_.get)
+  def set(config: SyncToken): URIO[SyncTokenConfiguration, Unit] = ZIO.serviceWithZIO(_.set(config))
+
+  private implicit val tokenConfReader: ConfigReader[SyncToken] = ConfigReader.forProduct1("since")(SyncToken(_))
+  private implicit val tokenConfigWriter: ConfigWriter[SyncToken] =
+    ConfigWriter[Option[String]].contramap[SyncToken](_.since)
 
   private def refFromFile(filename: String): IO[ConfigReaderFailures, Ref[SyncToken]] =
     ZIO

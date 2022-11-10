@@ -11,7 +11,7 @@ sealed trait RoomMessageType {
 object RoomMessageType {
 
   // redaction/deleted messages
-  final case object RoomMessageEmpty extends RoomMessageType {
+  case object RoomMessageEmpty extends RoomMessageType {
     val msgtype = ""
   }
 
@@ -32,18 +32,16 @@ object RoomMessageType {
   }
 
   // I can't think of a reason for the inner `toJsonAst` call to fail, but we still default to an empty object
-  implicit val messageTypeEncoder = Json.encoder.contramap[RoomMessageType] {
+  implicit val messageTypeEncoder: JsonEncoder[RoomMessageType] = Json.encoder.contramap[RoomMessageType] {
     case text: RoomMessageTextContent    => text.toJsonAST.getOrElse(Json.Obj())
     case img: RoomMessageImageContent    => img.toJsonAST.getOrElse(Json.Obj())
     case redacted: RoomMessageEmpty.type => redacted.toJsonAST.getOrElse(Json.Obj())
   }
 
-  implicit val roomTextContentDecoder: JsonDecoder[RoomMessageTextContent] =
-    DeriveJsonDecoder.gen[RoomMessageTextContent]
-  implicit val roomImageContentDecoder: JsonDecoder[RoomMessageImageContent] =
-    DeriveJsonDecoder.gen[RoomMessageImageContent]
+  implicit val roomTextContentDecoder: JsonDecoder[RoomMessageTextContent]   = DeriveJsonDecoder.gen
+  implicit val roomImageContentDecoder: JsonDecoder[RoomMessageImageContent] = DeriveJsonDecoder.gen
 
-  implicit val roomMessageTypeDecoder = JsonDecoder[Json].mapOrFail { json =>
+  implicit val roomMessageTypeDecoder: JsonDecoder[RoomMessageType] = JsonDecoder[Json].mapOrFail { json =>
     json.get(JsonCursor.field("msgtype")).flatMap(_.as[String]).left.flatMap(_ => Right("")).flatMap {
       case "m.text"  => json.as[RoomMessageTextContent]
       case "m.image" => json.as[RoomMessageImageContent]
