@@ -10,18 +10,15 @@ trait ExampleApp[T] extends ZIOAppDefault {
 
   def runExample: ZIO[AuthMatrixEnv, MatrixError, T]
 
-  override def run: ZIO[Environment, Any, ExitCode] =
+  override def run: ZIO[Environment, Throwable, ExitCode] =
     (Authentication.refresh *> runExample.withAutoRefresh.retry(Schedule.recurs(5)))
       .tapError(error => ZIO.logError(error.toString()))
       .exitCode
       .provide(
-        SyncTokenConfiguration
-          .persistent()
-          .mapError(x => new Exception(s"Unable to read token configuration $x"))
-          .orDie,
-        MatrixConfiguration.live().mapError(x => new Exception(s"Unable to read configuration $x")).orDie,
+        SyncTokenConfiguration.persistent(),
+        MatrixConfiguration.live(),
         Authentication.live,
-        HttpClientZioBackend.layer().orDie,
+        HttpClientZioBackend.layer(),
         MatrixClient.live,
         Matrix.make
       )
