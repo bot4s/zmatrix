@@ -134,7 +134,7 @@ object SerializationSpec extends ZIOSpecDefault {
         }
         """
 
-        assert(content.fromJson[RoomMessageType])(isRight(equalTo(RoomMessageTextContent("success"))))
+        assert(content.fromJson[RoomMessageType])(isRight(equalTo(RoomMessageTextContent("success")))) &&
         assert(content.fromJson[RoomMessageTextContent])(isRight(equalTo(RoomMessageTextContent("success"))))
       },
       test("RoomMessageTextContent - formatted body") {
@@ -148,7 +148,7 @@ object SerializationSpec extends ZIOSpecDefault {
 
         assert(content.fromJson[RoomMessageType])(
           isRight(equalTo(RoomMessageTextContent("success", formattedBody = Some("success - formatted"))))
-        )
+        ) &&
         assert(content.fromJson[RoomMessageTextContent])(
           isRight(equalTo(RoomMessageTextContent("success", formattedBody = Some("success - formatted"))))
         )
@@ -164,7 +164,7 @@ object SerializationSpec extends ZIOSpecDefault {
 
         assert(content.fromJson[RoomMessageType])(
           isRight(equalTo(RoomMessageImageContent("success", Some("http://fake.matrixbot/bot.jpg"))))
-        )
+        ) &&
         assert(content.fromJson[RoomMessageImageContent])(
           isRight(equalTo(RoomMessageImageContent("success", Some("http://fake.matrixbot/bot.jpg"))))
         )
@@ -316,6 +316,49 @@ object SerializationSpec extends ZIOSpecDefault {
           )
         )
 
+      },
+      test("Empty body and rooms") {
+        val result = """
+{
+    "next_batch": "s737036_20146721_28996_716058_326898_115_59067_740531_0",
+    "presence": {
+        "events": [
+            {
+                "type": "m.presence",
+                "sender": "@ex0ns:bouvier.family",
+                "content": {
+                    "presence": "online",
+                    "last_active_ago": 298,
+                    "currently_active": true
+                }
+            },
+            {
+                "type": "m.presence",
+                "sender": "@ziobot:bouvier.family",
+                "content": {
+                    "presence": "online",
+                    "last_active_ago": 45,
+                    "currently_active": true
+                }
+            }
+        ]
+    },
+    "device_lists": {
+        "changed": [
+            "@ziobot:bouvier.family"
+        ]
+    },
+    "device_one_time_keys_count": {
+        "signed_curve25519": 0
+    },
+    "org.matrix.msc2732.device_unused_fallback_key_types": [],
+    "device_unused_fallback_key_types": []
+}
+
+""".fromJson[SyncState](SyncState.syncStateDecoder)
+        assert(result)(
+          isRight(equalTo(SyncState(None, "s737036_20146721_28996_716058_326898_115_59067_740531_0", None)))
+        )
       }
     )
   )

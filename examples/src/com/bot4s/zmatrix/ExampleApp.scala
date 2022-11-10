@@ -5,6 +5,7 @@ import zio.{ Schedule, _ }
 import com.bot4s.zmatrix.client.MatrixClient
 import com.bot4s.zmatrix.services.Authentication
 import sttp.client3.httpclient.zio.HttpClientZioBackend
+import sttp.client3.SttpBackend
 
 trait ExampleApp[T] extends ZIOAppDefault {
 
@@ -18,7 +19,8 @@ trait ExampleApp[T] extends ZIOAppDefault {
         SyncTokenConfiguration.persistent(),
         MatrixConfiguration.live(),
         Authentication.live,
-        HttpClientZioBackend.layer(),
+        // On scala 3, the type of the ZEnvironment is not happy
+        HttpClientZioBackend.layer(): TaskLayer[SttpBackend[Task, Any]],
         MatrixClient.live,
         Matrix.make
       )
