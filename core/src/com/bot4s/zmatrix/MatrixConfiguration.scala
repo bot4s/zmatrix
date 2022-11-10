@@ -2,9 +2,8 @@ package com.bot4s.zmatrix
 
 import zio._
 
-import pureconfig.ConfigSource
+import pureconfig._
 import pureconfig.error.ConfigReaderFailures
-import pureconfig.generic.auto._
 
 final case class Config(
   matrix: MatrixConfigurationContent
@@ -32,6 +31,12 @@ object MatrixConfiguration {
   val DEFAULT_API_PREFIX  = "/_matrix"
   val DEFAULT_API_VERSION = "v3"
   val DEFAULT_CONFIG_FILE = "bot.conf"
+
+  private implicit val matrixContentConfigReader: ConfigReader[MatrixConfigurationContent] =
+    ConfigReader.forProduct6("home-server", "api-prefix", "api-version", "user-id", "device-name", "device-id")(
+      MatrixConfigurationContent(_, _, _, _, _, _)
+    )
+  private implicit val configReader: ConfigReader[Config] = ConfigReader.forProduct1("matrix")(Config(_))
 
   def get: URIO[MatrixConfiguration, Config] = ZIO.serviceWithZIO(_.get)
 
