@@ -10,12 +10,12 @@ object Versions {
   val zioLoggingVersion     = "2.1.3"
   val zioVersion            = "2.0.3"
   val zioJsonVersion        = "0.3.0"
+  val zioConfigVersion      = "3.0.2"
   val sttpVersion           = "3.8.3"
-  val pureConfigVersion     = "0.17.2"
   val scalafixModuleVersion = "0.6.0"
 }
 
-val scalaVersions = List("2.12.17", "2.13.10")
+val scalaVersions = List("2.12.17", "2.13.10", "3.2.0")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
@@ -33,38 +33,47 @@ trait Publishable extends PublishModule {
   )
 }
 
-trait ExtendedCrossScalaModule extends CrossScalaModule with ScalafixModule {
-  def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
+abstract class ExtendedCrossScalaModule(crossScalaVersion: String) extends CrossScalaModule with ScalafixModule {
+  override def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
+
+  override def scalacOptions = {
+    val specific =
+      if (crossScalaVersion.startsWith("3."))
+        Seq(
+          // https://github.com/zio/zio-json/issues/353
+          "-Yretain-trees"
+        )
+      else
+        Seq("-Ywarn-unused", "-Ywarn-dead-code")
+
+    specific ++ Seq(
+      "-unchecked",
+      "-deprecation",
+      "-language:_",
+      "-encoding",
+      "UTF-8",
+      "-feature"
+    )
+  }
+
 }
 
 object core extends Cross[CoreModule](scalaVersions: _*)
 
-class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule with Publishable {
+class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) with Publishable {
 
   import Versions._
 
   override def ivyDeps = Agg(
     ivy"dev.zio::zio:${zioVersion}",
     ivy"dev.zio::zio-json:${zioJsonVersion}",
+    ivy"dev.zio::zio-config:${zioConfigVersion}",
+    ivy"dev.zio::zio-config-magnolia:${zioConfigVersion}",
+    ivy"dev.zio::zio-config-typesafe:${zioConfigVersion}",
     ivy"dev.zio::zio-logging:${zioLoggingVersion}",
     ivy"com.softwaremill.sttp.client3::core:${sttpVersion}",
     ivy"com.softwaremill.sttp.client3::zio-json:${sttpVersion}",
-    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}",
-    ivy"com.github.pureconfig::pureconfig:${pureConfigVersion}",
-    // https://github.com/com-lihaoyi/mill/issues/1797
-    ivy"org.scala-lang:scala-reflect:${crossScalaVersion}"
-  )
-
-  override def scalacOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-Ywarn-unused",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-unchecked",
-    "-Ywarn-dead-code"
+    ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}"
   )
 
   object test extends Tests with ScalafixModule {
@@ -85,19 +94,8 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
 }
 
 object examples extends Cross[ExamplesModule](scalaVersions: _*)
-class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule {
+class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) {
   val moduleDeps = Seq(core(crossScalaVersion))
-  override def scalacOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-Ywarn-unused",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-unchecked",
-    "-Ywarn-dead-code"
-  )
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }

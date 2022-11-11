@@ -4,3 +4,4 @@ out/
 .vscode/
 .metals/
 token.conf
+since.conf

@@ -24,7 +24,7 @@ object Upload extends ExampleApp[Unit] {
   val runExample =
     (for {
       up     <- remoteUpload
-      config <- ZIO.service[MatrixConfiguration].flatMap(_.get)
+      config <- ZIO.service[MatrixConfiguration]
       _ <- printLine(
              s"Media uploaded, check out ${config.matrix.mediaApi}/download/${up.serverName}/${up.mediaId}"
            )

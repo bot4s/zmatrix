@@ -26,14 +26,13 @@ object MatrixClient {
     ZLayer.fromFunction(LiveMatrixClient.apply _)
 }
 
-final case class LiveMatrixClient(backend: SttpBackend[Task, Any], matrixConfig: MatrixConfiguration)
-    extends MatrixClient {
+final case class LiveMatrixClient(backend: SttpBackend[Task, Any], config: MatrixConfiguration) extends MatrixClient {
 
   override def send(
     request: JsonRequest
   ): IO[MatrixError, Json] =
     for {
-      config <- matrixConfig.get
+      _ <- ZIO.unit
       prefix = request.scope match {
                  case ApiScope.Client => config.matrix.clientApi
                  case ApiScope.Media  => config.matrix.mediaApi

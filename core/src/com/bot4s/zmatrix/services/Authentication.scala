@@ -28,30 +28,29 @@ object Authentication {
   val live = ZLayer.fromZIO(
     ZIO
       .environmentWithZIO[MatrixEnv] { env =>
-        env.get[MatrixConfiguration].get.flatMap { config =>
-          Ref.make(AccessToken(sys.env.getOrElse("MATRIX_BOT_ACCESS", ""))).map { tokenRef =>
-            new Authentication {
-              def accessToken: UIO[AccessToken] = tokenRef.get
+        val config = env.get[MatrixConfiguration]
+        Ref.make(AccessToken(sys.env.getOrElse("MATRIX_BOT_ACCESS", ""))).map { tokenRef =>
+          new Authentication {
+            def accessToken: UIO[AccessToken] = tokenRef.get
 
-              def refresh: IO[MatrixError, AccessToken] =
-                (config.matrix.userId, sys.env.get("MATRIX_BOT_PASSWORD")) match {
-                  case (Some(userId), Some(password)) =>
-                    Matrix
-                      .passwordLogin(
-                        user = userId,
-                        password = password,
-                        deviceId = config.matrix.deviceId
-                      )
-                      .flatMap(response => tokenRef.updateAndGet(_ => response.accessToken))
-                      .provideEnvironment(env)
-                  case (Some(_), _) =>
-                    ZIO.fail(
-                      MatrixError.InvalidParameterError("password", "Missing password, please set MATRIX_BOT_PASSWORD")
+            def refresh: IO[MatrixError, AccessToken] =
+              (config.matrix.userId, sys.env.get("MATRIX_BOT_PASSWORD")) match {
+                case (Some(userId), Some(password)) =>
+                  Matrix
+                    .passwordLogin(
+                      user = userId,
+                      password = password,
+                      deviceId = config.matrix.deviceId
                     )
-                  case (None, _) =>
-                    ZIO.fail(MatrixError.InvalidParameterError("userId", "user-id is not defined in configuration"))
-                }
-            }
+                    .flatMap(response => tokenRef.updateAndGet(_ => response.accessToken))
+                    .provideEnvironment(env)
+                case (Some(_), _) =>
+                  ZIO.fail(
+                    MatrixError.InvalidParameterError("password", "Missing password, please set MATRIX_BOT_PASSWORD")
+                  )
+                case (None, _) =>
+                  ZIO.fail(MatrixError.InvalidParameterError("userId", "user-id is not defined in configuration"))
+              }
           }
         }
       }

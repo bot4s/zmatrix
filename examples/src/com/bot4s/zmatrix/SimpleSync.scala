@@ -28,7 +28,7 @@ object SimpleSync extends ExampleApp[Unit] {
   override def runExample: ZIO[AuthMatrixEnv, MatrixError, Unit] =
     for {
       _      <- Matrix.whoAmI.debug
-      config <- MatrixConfiguration.get
+      config <- ZIO.service[MatrixConfiguration]
       fromBot = (sender: String) => config.matrix.userId.exists(name => sender.startsWith(s"@$name"))
       _      <- pollLoop(fromBot).repeat(Schedule.spaced(10.seconds))
     } yield ()
