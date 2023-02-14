@@ -18,11 +18,11 @@ jobs:
       - name: Check code format
         uses: jrouly/scalafmt-native-action@v1
         with:
-          version: "3.6.1"
+          version: "3.7.1"
           arguments: "-c .scalafmt.conf --test"
-      - uses: jodersky/setup-mill@v0.2.3
+      - uses: jodersky/setup-mill@v0.3.0
         with:
-          mill-version: 0.10.9
+          mill-version: 0.10.11
       - name: Compile
         run: mill '__.compile'
       - name: Test
