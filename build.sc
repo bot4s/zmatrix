@@ -7,11 +7,11 @@ import $ivy.`com.goyeau::mill-scalafix::0.2.11`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
-  val zioLoggingVersion     = "2.1.10"
-  val zioVersion            = "2.0.9"
-  val zioJsonVersion        = "0.4.2"
+  val zioLoggingVersion     = "2.1.13"
+  val zioVersion            = "2.0.13"
+  val zioJsonVersion        = "0.5.0"
   val zioConfigVersion      = "3.0.7"
-  val sttpVersion           = "3.8.11"
+  val sttpVersion           = "3.8.15"
   val scalafixModuleVersion = "0.6.0"
 }
 
@@ -19,7 +19,7 @@ val scalaVersions = List("2.12.17", "2.13.10", "3.2.1")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
-  override def publishVersion = "0.3.0"
+  override def publishVersion = "0.3.1"
 
   override def pomSettings = PomSettings(
     description = "Matrix.org API client written using ZIO",
