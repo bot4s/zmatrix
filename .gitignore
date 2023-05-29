@@ -3,5 +3,6 @@ out/
 .bsp/
 .vscode/
 .metals/
+target/
 token.conf
 since.conf
