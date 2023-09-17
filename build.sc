@@ -3,7 +3,7 @@ import scalalib._
 import publish._
 import mill.scalalib._
 
-import $ivy.`com.goyeau::mill-scalafix::0.2.11`
+import $ivy.`com.goyeau::mill-scalafix::0.3.1`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
@@ -33,7 +33,7 @@ trait Publishable extends PublishModule {
   )
 }
 
-abstract class ExtendedCrossScalaModule(crossScalaVersion: String) extends CrossScalaModule with ScalafixModule {
+trait ExtendedCrossScalaModule extends CrossScalaModule with ScalafixModule {
   override def scalafixIvyDeps =
     Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
 
@@ -62,9 +62,9 @@ abstract class ExtendedCrossScalaModule(crossScalaVersion: String) extends Cross
 
 }
 
-object core extends Cross[CoreModule](scalaVersions: _*)
+object core extends Cross[CoreModule](scalaVersions)
 
-class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) with Publishable {
+trait CoreModule extends ExtendedCrossScalaModule with Publishable {
 
   import Versions._
 
@@ -81,7 +81,7 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
     ivy"com.softwaremill.sttp.client3::zio:${sttpVersion}"
   )
 
-  object test extends Tests with ScalafixModule {
+  object test extends ScalaTests with ScalafixModule {
     def ivyDeps = Agg(
       ivy"dev.zio::zio-test:${zioVersion}",
       ivy"dev.zio::zio-test-sbt:${zioVersion}"
@@ -98,9 +98,9 @@ class CoreModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule
   }
 }
 
-object examples extends Cross[ExamplesModule](scalaVersions: _*)
-class ExamplesModule(val crossScalaVersion: String) extends ExtendedCrossScalaModule(crossScalaVersion) {
-  val moduleDeps = Seq(core(crossScalaVersion))
+object examples extends Cross[ExamplesModule](scalaVersions)
+trait ExamplesModule extends ExtendedCrossScalaModule {
+  override def moduleDeps = Seq(core(crossScalaVersion))
 
   def mainClass = Some("com.bot4s.zmatrix.Runner")
 }
