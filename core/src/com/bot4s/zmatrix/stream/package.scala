@@ -55,7 +55,7 @@ package object stream {
     ZPipeline.map { (input: AssociatedEvents[T]) =>
       val (roomId, events) = input
 
-      events.collect {
+      val _ = events.collect {
         case event if pf.isDefinedAt(roomId, event) => pf(roomId, event)
       }
 
