@@ -3,7 +3,7 @@ import scalalib._
 import publish._
 import mill.scalalib._
 
-import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import $ivy.`com.goyeau::mill-scalafix::0.3.2`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
@@ -19,7 +19,7 @@ val scalaVersions = List("2.12.17", "2.13.11", "3.3.1")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
-  override def publishVersion = "0.3.1"
+  override def publishVersion = "0.3.2"
 
   override def pomSettings = PomSettings(
     description = "Matrix.org API client written using ZIO",
