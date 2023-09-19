@@ -11,7 +11,7 @@ final case class Rooms(
 final case class JoinedRoom(timeline: RoomEventTimeline)
 final case class RoomEventTimeline(events: List[RoomEvent], limited: Boolean)
 
-final case class InvitedRoom(inviteState: InviteState)
+final case class InvitedRoom(@jsonField("invite_state") inviteState: InviteState)
 final case class InviteState(events: List[InviteEvent])
 
 object Rooms {
