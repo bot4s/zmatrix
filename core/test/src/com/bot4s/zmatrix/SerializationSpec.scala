@@ -57,22 +57,21 @@ object SerializationSpec extends ZIOSpecDefault {
       },
       test("m.room.message") {
         val source = """
-      {
-  "type": "m.room.message",
-  "sender": "@bot:matrix.org",
-  "content": {
-    "msgtype": "m.text",
-    "body": "success"
-  },
-  "origin_server_ts": 1666766141000,
-  "unsigned": {
-    "age": 75
-  },
-  "event_id": "$5w9tsY4TSSgW_sTVeyt1MlpgW0N_XuTvNntK111-JmI",
-  "room_id": "!my_roomt:matrix.org"
-}
-      """
-        val res    = source.fromJson[RoomEvent]
+                       |      {
+                       |  "type": "m.room.message",
+                       |  "sender": "@bot:matrix.org",
+                       |  "content": {
+                       |    "msgtype": "m.text",
+                       |    "body": "success"
+                       |  },
+                       |  "origin_server_ts": 1666766141000,
+                       |  "unsigned": {
+                       |    "age": 75
+                       |  },
+                       |  "event_id": "$5w9tsY4TSSgW_sTVeyt1MlpgW0N_XuTvNntK111-JmI",
+                       |  "room_id": "!my_roomt:matrix.org"
+                       |} """.stripMargin
+        val res = source.fromJson[RoomEvent]
         assert(res)(
           isRight(
             equalTo(
@@ -87,30 +86,29 @@ object SerializationSpec extends ZIOSpecDefault {
       },
       test("redacted") {
         val source = """
-{
-  "type": "m.room.message",
-  "sender": "@user:matrix.org",
-  "content": {},
-  "origin_server_ts": 1666874589140,
-  "unsigned": {
-      "redacted_by": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg",
-      "redacted_because": {
-          "type": "m.room.redaction",
-          "sender": "@other:matrix.org",
-          "content": {},
-          "redacts": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc",
-          "origin_server_ts": 1666874601850,
-          "unsigned": {
-              "age": 111624586
-          },
-          "event_id": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg"
-      },
-      "age": 111637296
-  },
-  "event_id": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc"
-}
-      """
-        val res    = source.fromJson[RoomEvent]
+                       |{
+                       |  "type": "m.room.message",
+                       |  "sender": "@user:matrix.org",
+                       |  "content": {},
+                       |  "origin_server_ts": 1666874589140,
+                       |  "unsigned": {
+                       |      "redacted_by": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg",
+                       |      "redacted_because": {
+                       |          "type": "m.room.redaction",
+                       |          "sender": "@other:matrix.org",
+                       |          "content": {},
+                       |          "redacts": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc",
+                       |          "origin_server_ts": 1666874601850,
+                       |          "unsigned": {
+                       |              "age": 111624586
+                       |          },
+                       |          "event_id": "$PTBHIj9ZCpLTYBUdzsBumOnA-ozXfmhssdwY-5dMYUg"
+                       |      },
+                       |      "age": 111637296
+                       |  },
+                       |  "event_id": "$gqlw0nXSUGTqfgsFMvdHJagjPkcuUy7cTG79sjGcVqc"
+                       |} """.stripMargin
+        val res = source.fromJson[RoomEvent]
         assert(res)(
           isRight(
             equalTo(
@@ -180,100 +178,98 @@ object SerializationSpec extends ZIOSpecDefault {
       },
       test("decode") {
         val content = """
-        {
-            "next_batch": "s735798_20141841_27974_715432_326180_115_59046_739295_0",
-            "presence": {
-                "events": [
-                    {
-                        "type": "m.presence",
-                        "sender": "@ex0ns:matrix.org",
-                        "content": {
-                            "presence": "online",
-                            "last_active_ago": 215,
-                            "currently_active": true
-                        }
-                    },
-                    {
-                        "type": "m.presence",
-                        "sender": "@ziobot:matrix.org",
-                        "content": {
-                            "presence": "online",
-                            "last_active_ago": 28,
-                            "currently_active": true
-                        }
-                    }
-                ]
-            },
-            "device_lists": {
-                "changed": [
-                    "@ziobot:matrix.org"
-                ]
-            },
-            "device_one_time_keys_count": {
-                "signed_curve25519": 0
-            },
-            "org.matrix.msc2732.device_unused_fallback_key_types": [],
-            "device_unused_fallback_key_types": [],
-            "rooms": {
-                "join": {
-                    "!sdUfnyuUPYtPGbcZhj:matrix.org": {
-                        "timeline": {
-                            "events": [
-                                {
-                                    "type": "m.room.message",
-                                    "sender": "@ziobot:matrix.org",
-                                    "content": {
-                                        "body": "CC Logo",
-                                        "url": "mxc://matrix.org/IkaslHFPELmKVhXDDGMCKUWt",
-                                        "info": {
-                                            "h": 100,
-                                            "w": 100
-                                        },
-                                        "msgtype": "m.image"
-                                    },
-                                    "origin_server_ts": 1667982642143,
-                                    "unsigned": {
-                                        "age": 390843
-                                    },
-                                    "event_id": "$sgL3nknhUljN5T7bqCYS5FC8pYK3GBe_o7JXC94NDfI"
-                                }
-                            ],
-                            "prev_batch": "s735790_20141841_27974_715432_326180_115_59046_739295_0",
-                            "limited": false
-                        },
-                        "state": {
-                            "events": []
-                        },
-                        "account_data": {
-                            "events": []
-                        },
-                        "ephemeral": {
-                            "events": [
-                                {
-                                    "type": "m.receipt",
-                                    "content": {
-                                        "$sgL3nknhUljN5T7bqCYS5FC8pYK3GBe_o7JXC94NDfI": {
-                                            "m.read": {
-                                                "@ex0ns:matrix.org": {
-                                                    "ts": 1667982687776
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "unread_notifications": {
-                            "notification_count": 29,
-                            "highlight_count": 0
-                        },
-                        "summary": {}
-                    }
-                }
-            }
-        }
-      
-      """
+                        |{
+                        |    "next_batch": "s735798_20141841_27974_715432_326180_115_59046_739295_0",
+                        |    "presence": {
+                        |        "events": [
+                        |            {
+                        |                "type": "m.presence",
+                        |                "sender": "@ex0ns:matrix.org",
+                        |                "content": {
+                        |                    "presence": "online",
+                        |                    "last_active_ago": 215,
+                        |                    "currently_active": true
+                        |                }
+                        |            },
+                        |            {
+                        |                "type": "m.presence",
+                        |                "sender": "@ziobot:matrix.org",
+                        |                "content": {
+                        |                    "presence": "online",
+                        |                    "last_active_ago": 28,
+                        |                    "currently_active": true
+                        |                }
+                        |            }
+                        |        ]
+                        |    },
+                        |    "device_lists": {
+                        |        "changed": [
+                        |            "@ziobot:matrix.org"
+                        |        ]
+                        |    },
+                        |    "device_one_time_keys_count": {
+                        |        "signed_curve25519": 0
+                        |    },
+                        |    "org.matrix.msc2732.device_unused_fallback_key_types": [],
+                        |    "device_unused_fallback_key_types": [],
+                        |    "rooms": {
+                        |        "join": {
+                        |            "!sdUfnyuUPYtPGbcZhj:matrix.org": {
+                        |                "timeline": {
+                        |                    "events": [
+                        |                        {
+                        |                            "type": "m.room.message",
+                        |                            "sender": "@ziobot:matrix.org",
+                        |                            "content": {
+                        |                                "body": "CC Logo",
+                        |                                "url": "mxc://matrix.org/IkaslHFPELmKVhXDDGMCKUWt",
+                        |                                "info": {
+                        |                                    "h": 100,
+                        |                                    "w": 100
+                        |                                },
+                        |                                "msgtype": "m.image"
+                        |                            },
+                        |                            "origin_server_ts": 1667982642143,
+                        |                            "unsigned": {
+                        |                                "age": 390843
+                        |                            },
+                        |                            "event_id": "$sgL3nknhUljN5T7bqCYS5FC8pYK3GBe_o7JXC94NDfI"
+                        |                        }
+                        |                    ],
+                        |                    "prev_batch": "s735790_20141841_27974_715432_326180_115_59046_739295_0",
+                        |                    "limited": false
+                        |                },
+                        |                "state": {
+                        |                    "events": []
+                        |                },
+                        |                "account_data": {
+                        |                    "events": []
+                        |                },
+                        |                "ephemeral": {
+                        |                    "events": [
+                        |                        {
+                        |                            "type": "m.receipt",
+                        |                            "content": {
+                        |                                "$sgL3nknhUljN5T7bqCYS5FC8pYK3GBe_o7JXC94NDfI": {
+                        |                                    "m.read": {
+                        |                                        "@ex0ns:matrix.org": {
+                        |                                            "ts": 1667982687776
+                        |                                        }
+                        |                                    }
+                        |                                }
+                        |                            }
+                        |                        }
+                        |                    ]
+                        |                },
+                        |                "unread_notifications": {
+                        |                    "notification_count": 29,
+                        |                    "highlight_count": 0
+                        |                },
+                        |                "summary": {}
+                        |            }
+                        |        }
+                        |    }
+                        |}""".stripMargin
 
         assert(content.fromJson[SyncState])(
           isRight(
@@ -319,45 +315,104 @@ object SerializationSpec extends ZIOSpecDefault {
       },
       test("Empty body and rooms") {
         val result = """
-{
-    "next_batch": "s737036_20146721_28996_716058_326898_115_59067_740531_0",
-    "presence": {
-        "events": [
-            {
-                "type": "m.presence",
-                "sender": "@ex0ns:bouvier.family",
-                "content": {
-                    "presence": "online",
-                    "last_active_ago": 298,
-                    "currently_active": true
-                }
-            },
-            {
-                "type": "m.presence",
-                "sender": "@ziobot:bouvier.family",
-                "content": {
-                    "presence": "online",
-                    "last_active_ago": 45,
-                    "currently_active": true
-                }
-            }
-        ]
-    },
-    "device_lists": {
-        "changed": [
-            "@ziobot:bouvier.family"
-        ]
-    },
-    "device_one_time_keys_count": {
-        "signed_curve25519": 0
-    },
-    "org.matrix.msc2732.device_unused_fallback_key_types": [],
-    "device_unused_fallback_key_types": []
-}
-
-""".fromJson[SyncState](SyncState.syncStateDecoder)
+                       |{
+                       |    "next_batch": "s737036_20146721_28996_716058_326898_115_59067_740531_0",
+                       |    "presence": {
+                       |        "events": [
+                       |            {
+                       |                "type": "m.presence",
+                       |                "sender": "@ex0ns:matrix.org",
+                       |                "content": {
+                       |                    "presence": "online",
+                       |                    "last_active_ago": 298,
+                       |                    "currently_active": true
+                       |                }
+                       |            },
+                       |            {
+                       |                "type": "m.presence",
+                       |                "sender": "@ziobot:matrix.org",
+                       |                "content": {
+                       |                    "presence": "online",
+                       |                    "last_active_ago": 45,
+                       |                    "currently_active": true
+                       |                }
+                       |            }
+                       |        ]
+                       |    },
+                       |    "device_lists": {
+                       |        "changed": [
+                       |            "@ziobot:matrix.org"
+                       |        ]
+                       |    },
+                       |    "device_one_time_keys_count": {
+                       |        "signed_curve25519": 0
+                       |    },
+                       |    "org.matrix.msc2732.device_unused_fallback_key_types": [],
+                       |    "device_unused_fallback_key_types": []
+                       |}""".stripMargin.fromJson[SyncState](SyncState.syncStateDecoder)
         assert(result)(
           isRight(equalTo(SyncState(None, "s737036_20146721_28996_716058_326898_115_59067_740531_0", None)))
+        )
+      },
+      test("room invitation") {
+        val result =
+          """
+            |{
+            |    "next_batch": "s737036_20146721_28996_716058_326898_115_59067_740531_0",
+            |    "presence": { },
+            |    "device_lists": {
+            |        "changed": [
+            |            "@ziobot:matrix.org"
+            |        ]
+            |    },
+            |    "device_one_time_keys_count": {
+            |        "signed_curve25519": 0
+            |    },
+            |    "org.matrix.msc2732.device_unused_fallback_key_types": [],
+            |    "device_unused_fallback_key_types": [],
+            |    "rooms": {
+            |        "invite": {
+            |            "!sdUfnyuUPYtPGbcZhj:matrix.org": {
+            |              "invite_state":{"events":[{"type":"m.room.join_rules", "state_key": "","content":{"join_rule":"invite"},"sender":"@admin:matrix.org"}]}
+            |            }
+            |        }
+            |    }
+            |}""".stripMargin.fromJson[SyncState](SyncState.syncStateDecoder)
+        assert(result)(
+          isRight(
+            equalTo(
+              SyncState(
+                None,
+                "s737036_20146721_28996_716058_326898_115_59067_740531_0",
+                Some(
+                  Rooms(
+                    Some(
+                      Map(
+                        RoomId("!sdUfnyuUPYtPGbcZhj:matrix.org") -> InvitedRoom(
+                          InviteState(
+                            List(
+                              InviteEvent.GenericMemberEventContent(
+                                "m.room.join_rules",
+                                Json.Obj(
+                                  "type"      -> Json.Str("m.room.join_rules"),
+                                  "state_key" -> Json.Str(""),
+                                  "content" -> Json.Obj(
+                                    "join_rule" -> Json.Str("invite")
+                                  ),
+                                  "sender" -> Json.Str("@admin:matrix.org")
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    ),
+                    None
+                  )
+                )
+              )
+            )
+          )
         )
       }
     )
