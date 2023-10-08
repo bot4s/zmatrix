@@ -38,7 +38,7 @@ trait ExtendedCrossScalaModule extends CrossScalaModule with ScalafixModule {
     Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
 
   override def scalacPluginIvyDeps =
-    Agg(ivy"com.github.ghik:::zerowaste:0.2.14")
+    Agg(ivy"com.github.ghik:::zerowaste:0.2.15")
 
   override def scalacOptions = {
     val specific =
