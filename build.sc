@@ -7,7 +7,7 @@ import $ivy.`com.goyeau::mill-scalafix::0.3.1`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
-  val zioLoggingVersion     = "2.1.14"
+  val zioLoggingVersion     = "2.1.15"
   val zioVersion            = "2.0.18"
   val zioJsonVersion        = "0.6.2"
   val zioConfigVersion      = "3.0.7"
