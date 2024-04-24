@@ -32,7 +32,7 @@ object MatrixConfiguration {
   val DEFAULT_API_VERSION = "v3"
   val DEFAULT_CONFIG_FILE = "bot.conf"
 
-  val configReader = descriptor[MatrixConfiguration]
+  val configReader = deriveConfig[MatrixConfiguration]
 
   def from(filename: String): Task[MatrixConfiguration] =
     fromFile(filename)
@@ -42,11 +42,13 @@ object MatrixConfiguration {
     ConfigParseOptions.defaults.setAllowMissing(false)
 
   private def fromHoconFile(url: URL) =
-    read(
-      configReader from ConfigSource.fromTypesafeConfig(
-        ZIO.attempt(ConfigFactory.parseURL(url, strictSettings.setClassLoader(null)))
+    ZIO
+      .attempt(ConfigFactory.parseURL(url, strictSettings.setClassLoader(null)))
+      .flatMap(config =>
+        read(
+          configReader from ConfigProvider.fromTypesafeConfig(config)
+        )
       )
-    )
 
   private def fromResource(filename: String) = {
     val adapted = if (filename.startsWith("/")) filename else s"/$filename"

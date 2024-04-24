@@ -89,25 +89,18 @@ val mainLoop = mirrorEcho
 The `updateState` method is a key piece here. Matrix API rely heavily on pagination to keep track of the state, it will by default return the whole state
 for a client. By calling `updateState` we make sure to save our current pagination and only ask for newer events to the API.
 
-The last step is to provide and environment to this effect, we are using the amazing [zio-magic](https://github.com/kitlangton/zio-magic) lib to help us with
-the `ZLayer` configuration:
-
 ```scala
-val loggingLayer = Logging.console(
-  logLevel = LogLevel.Info,
-  format = LogFormat.ColoredLogFormat()
-) >>> Logging.withRootLoggerName("matrix-zio-sync")
-
-mainLoop.inject(
-  ZEnv.live,
-  loggingLayer,
-  MatrixConfiguration.persistent(), // will read/write the configuration from a `bot.conf` file in the project's resources
-  Authentication.live, // A HTTP middleware that will take care of creating/checking validity of credential/token
-  AsyncHttpClientZioBackend.layer(), // STTP zio backend to perform HTTP queries
-  MatrixClient.live // The actual implementation of the client
-)
-.retry(Schedule.forever)
-.exitCode
+mainLoop
+    .withAutoRefresh.retry(Schedule.forever)
+    .exitCode
+    .provide(
+        SyncTokenConfiguration.persistent(),
+        MatrixConfiguration.live(),
+        Authentication.live,
+        HttpClientZioBackend.layer(): TaskLayer[SttpBackend[Task, Any]],
+        MatrixClient.live,
+        Matrix.make
+    )
 ```
 
 ## Examples

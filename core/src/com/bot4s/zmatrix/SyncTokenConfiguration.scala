@@ -22,12 +22,12 @@ object SyncTokenConfiguration {
   def get: URIO[SyncTokenConfiguration, SyncToken]               = ZIO.serviceWithZIO(_.get)
   def set(config: SyncToken): URIO[SyncTokenConfiguration, Unit] = ZIO.serviceWithZIO(_.set(config))
 
-  val configReader = descriptor[SyncToken]
+  val configReader = deriveConfig[SyncToken]
 
   private def refFromFile(filename: String): Task[Ref[SyncToken]] =
     for {
       file   <- ZIO.attempt(new File(filename))
-      source  = ConfigSource.fromHoconFile(file)
+      source  = ConfigProvider.fromHoconFile(file)
       config <- read(configReader from source)
       result <- Ref.make(config)
     } yield result
@@ -73,13 +73,14 @@ object SyncTokenConfiguration {
         override def set(config: SyncToken): UIO[Unit] = {
 
           val updateConf = for {
-            _       <- configRef.set(config)
-            file    <- ZIO.attempt(new File(filename))
-            content <- ZIO.fromEither(write(configReader, config))
+            _    <- configRef.set(config)
+            file <- ZIO.attempt(new File(filename))
+            // zio-config 4.X removed the ability to write a config
+            content = s"""since="${config.since.mkString}""""
             _ <-
               ZIO.acquireReleaseWith(ZIO.attempt(new BufferedWriter(new FileWriter(file))))(bw =>
                 ZIO.succeed(bw.close)
-              )(c => ZIO.attempt(c.write(content.toHoconString)))
+              )(c => ZIO.attempt(c.write(content)))
           } yield ()
 
           updateConf.catchAll(_ => ZIO.succeed(()))
