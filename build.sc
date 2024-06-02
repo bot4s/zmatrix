@@ -15,7 +15,7 @@ object Versions {
   val scalafixModuleVersion = "0.6.0"
 }
 
-val scalaVersions = List("2.12.19", "2.13.13", "3.3.3")
+val scalaVersions = List("2.12.19", "2.13.14", "3.3.3")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
@@ -38,7 +38,7 @@ trait ExtendedCrossScalaModule extends CrossScalaModule with ScalafixModule {
     Agg(ivy"com.github.liancheng::organize-imports:${Versions.scalafixModuleVersion}")
 
   override def scalacPluginIvyDeps =
-    Agg(ivy"com.github.ghik:::zerowaste:0.2.19")
+    Agg(ivy"com.github.ghik:::zerowaste:0.2.21")
 
   override def scalacOptions = {
     val specific =
