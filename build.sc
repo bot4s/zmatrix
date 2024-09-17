@@ -3,7 +3,7 @@ import scalalib._
 import publish._
 import mill.scalalib._
 
-import $ivy.`com.goyeau::mill-scalafix::0.4.0`
+import $ivy.`com.goyeau::mill-scalafix::0.4.1`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
