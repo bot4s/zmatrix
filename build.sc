@@ -8,7 +8,7 @@ import com.goyeau.mill.scalafix.ScalafixModule
 
 object Versions {
   val zioLoggingVersion     = "2.3.1"
-  val zioVersion            = "2.1.9"
+  val zioVersion            = "2.1.11"
   val zioJsonVersion        = "0.7.3"
   val zioConfigVersion      = "4.0.2"
   val sttpVersion           = "3.10.0"
