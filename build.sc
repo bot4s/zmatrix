@@ -11,7 +11,7 @@ object Versions {
   val zioVersion            = "2.1.16"
   val zioJsonVersion        = "0.7.39"
   val zioConfigVersion      = "4.0.4"
-  val sttpVersion           = "3.10.3"
+  val sttpVersion           = "3.11.0"
   val scalafixModuleVersion = "0.6.0"
 }
 
