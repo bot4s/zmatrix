@@ -15,10 +15,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
-      - name: Install Mill
-        run: |
-          curl -L --fail --output mill https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.1.7/mill-dist-1.1.7-mill.sh
-          chmod +x mill
       - name: Check code format
         run: ./mill mill.scalalib.scalafmt/checkFormatAll
       - name: Compile
