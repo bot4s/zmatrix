@@ -67,7 +67,7 @@ package object stream {
   ) =
     ZPipeline.mapZIO { (input: AssociatedEvents[T]) =>
       val (roomId, events) = input
-      val res = events.collect {
+      val res              = events.collect {
         case event if pf.isDefinedAt(roomId, event) => pf(roomId, event)
       }
       ZIO.collectAll(res).as((roomId, events))

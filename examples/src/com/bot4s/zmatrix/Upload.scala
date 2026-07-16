@@ -25,7 +25,7 @@ object Upload extends ExampleApp[Unit] {
     (for {
       up     <- remoteUpload
       config <- ZIO.service[MatrixConfiguration]
-      _ <- printLine(
+      _      <- printLine(
              s"Media uploaded, check out ${config.matrix.mediaApi}/download/${up.serverName}/${up.mediaId}"
            )
     } yield ()).debug.refineOrDie { case x: MatrixError => x }.unit

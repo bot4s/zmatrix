@@ -19,8 +19,8 @@ object Runner extends ZIOAppDefault {
     val examplesStr =
       examples.keySet.mkString(start = "Available examples (ctrl-c to exit):\n\t", sep = "\n\t", end = "\n> ")
     (for {
-      _     <- print(examplesStr)
-      input <- readLine
+      _       <- print(examplesStr)
+      input   <- readLine
       example <- ZIO
                    .fromOption(examples.get(input))
                    .mapError(_ => new Exception(s"Example '$input' does not exist"))

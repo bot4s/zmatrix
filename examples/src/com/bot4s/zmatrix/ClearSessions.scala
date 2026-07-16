@@ -7,7 +7,7 @@ object ClearSessions extends ExampleApp[Unit] {
 
   val runExample =
     (for {
-      currrent <- Matrix.whoAmI
+      currrent   <- Matrix.whoAmI
       validation <- readLine(s"Do you want to remove all sessions for ${currrent.userId} ? (Y/N): ")
                       .repeatWhile(entry => !Set("y", "n").contains(entry.toLowerCase()))
       _ <- ZIO.when(validation.toLowerCase.startsWith("y"))(printLine("Clearing all sessions\n") *> Matrix.logoutAll)

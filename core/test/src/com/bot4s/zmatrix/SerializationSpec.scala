@@ -396,7 +396,7 @@ object SerializationSpec extends ZIOSpecDefault {
                                 Json.Obj(
                                   "type"      -> Json.Str("m.room.join_rules"),
                                   "state_key" -> Json.Str(""),
-                                  "content" -> Json.Obj(
+                                  "content"   -> Json.Obj(
                                     "join_rule" -> Json.Str("invite")
                                   ),
                                   "sender" -> Json.Str("@admin:matrix.org")

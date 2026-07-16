@@ -7,7 +7,7 @@ import sttp.model.MediaType
 sealed trait MatrixBody
 
 object MatrixBody {
-  case object EmptyBody extends MatrixBody
+  case object EmptyBody                        extends MatrixBody
   case class JsonBody[T: JsonEncoder](json: T) extends MatrixBody {
     val encoder = implicitly[JsonEncoder[T]]
     def encode  = json.toJson

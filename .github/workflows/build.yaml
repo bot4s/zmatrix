@@ -14,16 +14,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Check code format
-        uses: jrouly/scalafmt-native-action@v1
-        with:
-          version: "3.8.3"
-          arguments: "-c .scalafmt.conf --test"
-      - uses: jodersky/setup-mill@v0.3.0
-        with:
-          mill-version: 0.12.2
+        run: ./mill mill.scalalib.scalafmt/checkFormatAll
       - name: Compile
-        run: mill '__.compile'
+        run: ./mill '__.compile'
       - name: Test
-        run: mill '__.test'
+        run: ./mill '__.test'

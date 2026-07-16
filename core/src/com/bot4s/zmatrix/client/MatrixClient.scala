@@ -32,14 +32,14 @@ final case class LiveMatrixClient(backend: SttpBackend[Task, Any], config: Matri
     request: JsonRequest
   ): IO[MatrixError, Json] =
     for {
-      _ <- ZIO.unit
+      _     <- ZIO.unit
       prefix = request.scope match {
                  case ApiScope.Client => config.matrix.clientApi
                  case ApiScope.Media  => config.matrix.mediaApi
                }
       httpRequest = request.toRequest(prefix)
       _          <- ZIO.logDebug(httpRequest.toCurl)
-      result <- backend
+      result     <- backend
                   .send(httpRequest.response(asBoth(httpRequest.response, asStringAlways)))
                   .mapError(error => NetworkError(f"Error contacting matrix server: ${error.toString()}", error))
 
