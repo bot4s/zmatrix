@@ -9,12 +9,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v7
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Publish
         shell: bash
         env:
           MILL_SONATYPE_USERNAME: ${{ secrets.OSS_USERNAME }}
           MILL_SONATYPE_PASSWORD: ${{ secrets.OSS_PASSWORD }}
-          MILL_PGP_PASSPHRASE: ${{ secrets.MILL_PGP_PASSPHRASE }}
-          MILL_PGP_SECRET_BASE64: ${{ secrets.MILL_PGP_SECRET_BASE64 }}
+          MILL_PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ./mill mill.javalib.SonatypeCentralPublishModule/ --publishArtifacts __.publishArtifacts
+          ./mill mill.javalib.SonatypeCentralPublishModule/ \
+            --publishArtifacts __.publishArtifacts \
+            --useGpgCli true
