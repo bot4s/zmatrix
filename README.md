@@ -129,7 +129,7 @@ The design of the lib was heavily inspired by the work done on [zio-slack](https
 The actual endpoint implementation and reference for the Matrix API is taken from [matrix-nio](https://github.com/poljar/matrix-nio/) project, written in python.
 
 [link-sonatypereleases]: https://central.sonatype.com/artifact/com.bot4s/zmatrix_3 "Maven Central Releases"
-[link-sonatypesnapshots]: https://central.sonatype.com/repository/maven-snapshots/com/bot4s/zmatrix_3/ "Maven Central Snapshots"
+[link-sonatypesnapshots]: https://central.sonatype.com/repository/maven-snapshots/com/bot4s/zmatrix_3/maven-metadata.xml "Maven Central Snapshots"
 [badge-ci]: https://github.com/bot4s/zmatrix/actions/workflows/build.yaml/badge.svg
 [badge-sonatypereleases]: https://img.shields.io/maven-central/v/com.bot4s/zmatrix_3.svg?label=release "Maven Central Releases"
 [badge-sonatypesnapshots]: https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fcom%2Fbot4s%2Fzmatrix_3%2Fmaven-metadata.xml&label=snapshot "Maven Central Snapshots"
