@@ -11,22 +11,27 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - uses: jodersky/setup-mill@v0.3.0
-        with:
-          mill-version: 0.12.2
+        uses: actions/checkout@v7
+      - name: Install Mill
+        run: |
+          curl -L --fail --output mill https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.1.7/mill-dist-1.1.7-mill.sh
+          chmod +x mill
       - name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v3
+        uses: crazy-max/ghaction-import-gpg@v7
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Set version
-        run: sed -i "s/publishVersion = \"\(.*\)\"/publishVersion = \"\1-$(echo ${GITHUB_SHA} | cut -c1-8)-SNAPSHOT\"/g" build.sc
+        run: sed -i "s/publishVersion = \"\(.*\)\"/publishVersion = \"\1-$(echo ${GITHUB_SHA} | cut -c1-8)-SNAPSHOT\"/g" build.mill
       - name: Publish
         shell: bash
         env:
           USERNAME: ${{ secrets.OSS_USERNAME }}
           PASSWORD: ${{ secrets.OSS_PASSWORD }}
+          MILL_PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mill mill.scalalib.PublishModule/ --publishArtifacts __.publishArtifacts --sonatypeCreds "$USERNAME:$PASSWORD"
+          ./mill mill.scalalib.SonatypeCentralPublishModule/ \
+            --publishArtifacts __.publishArtifacts \
+            --username "$USERNAME" \
+            --password "$PASSWORD"

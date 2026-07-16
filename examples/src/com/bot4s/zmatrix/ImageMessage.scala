@@ -15,7 +15,7 @@ object ImageMessage extends ExampleApp[Unit] {
   val runExample =
     (for {
       up <- upload
-      _ <- Matrix.sendEvent(
+      _  <- Matrix.sendEvent(
              RoomId(""), // replace with a room that exists
              RoomMessageType.RoomMessageImageContent(
                "CC Logo",

@@ -69,7 +69,7 @@ object SyncTokenConfiguration {
   ): TaskLayer[SyncTokenConfiguration] =
     ZLayer.fromZIO(refFromFile(filename).map { configRef =>
       new SyncTokenConfiguration {
-        override def get: UIO[SyncToken] = configRef.get
+        override def get: UIO[SyncToken]               = configRef.get
         override def set(config: SyncToken): UIO[Unit] = {
 
           val updateConf = for {
@@ -77,7 +77,7 @@ object SyncTokenConfiguration {
             file <- ZIO.attempt(new File(filename))
             // zio-config 4.X removed the ability to write a config
             content = s"""since="${config.since.mkString}""""
-            _ <-
+            _      <-
               ZIO.acquireReleaseWith(ZIO.attempt(new BufferedWriter(new FileWriter(file))))(bw =>
                 ZIO.succeed(bw.close)
               )(c => ZIO.attempt(c.write(content)))

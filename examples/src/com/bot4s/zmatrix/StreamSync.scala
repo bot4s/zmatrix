@@ -1,8 +1,9 @@
 package com.bot4s.zmatrix
 
 import zio._
-import com.bot4s.zmatrix.stream._
+
 import com.bot4s.zmatrix.models._
+import com.bot4s.zmatrix.stream._
 
 object StreamSync extends ExampleApp[Unit] {
 

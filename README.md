@@ -14,19 +14,21 @@ Add the following dependency to your project's build file
 // sbt
 "com.bot4s" %% "zmatrix" % "0.4.0"
 // mill
-ivy"com.bot4s::zmatrix:0.4.0"
+mvn"com.bot4s::zmatrix:0.4.0"
 ```
 
 It is also possible to get the latest snapshot from [Snapshot Artifacts][link-sonatypesnapshots] by adding the following
-lines to your `build.sc`:
+lines to your `build.mill`:
 
 ```scala
-def repositories = super.repositories ++ Seq(
-  MavenRepository("https://oss.sonatype.org/content/repositories/snapshots")
-)
+override def repositoriesTask = Task.Anon {
+  super.repositoriesTask() ++ Seq(
+    coursier.maven.MavenRepository("https://central.sonatype.com/repository/maven-snapshots")
+  )
+}
 ```
 
-And then `ivy"com.bot4s::zmatrix:$SNAPSHOT-VERSION"`
+And then `mvn"com.bot4s::zmatrix:$SNAPSHOT-VERSION"`
 
 ## Description
 
@@ -105,10 +107,10 @@ mainLoop
 
 ## Examples
 
-The `examples` package comtains runnable examples for `zmatrix`. Examples can be selected by changing the `mainClass` definition in the `build.sc` or by running the following command:
+The `examples` package comtains runnable examples for `zmatrix`. Examples can be selected by changing the `mainClass` definition in the `build.mill` or by running the following command:
 
 ```
-mill -i examples[_].run
+mill examples[2.13.18].run
 ```
 
 ## Building

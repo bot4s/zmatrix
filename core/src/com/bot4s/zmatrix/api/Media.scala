@@ -44,7 +44,7 @@ trait Media { self: MatrixApiBase =>
         .mapError(t => NetworkError(f"Unable to fetch resource at ${url}", t))
     }
 
-    val body = response.flatMap(response => ZIO.fromEither(response.body))
+    val body               = response.flatMap(response => ZIO.fromEither(response.body))
     val requestContentType =
       response.flatMap(resp => ZIO.fromOption(resp.header("content-type").flatMap(ct => MediaType.parse(ct).toOption)))
 
