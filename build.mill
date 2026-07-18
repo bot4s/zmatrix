@@ -10,11 +10,11 @@ import mill.scalalib.*
 import mill.scalalib.publish.*
 
 object Versions {
-  val zioLoggingVersion     = "2.5.3"
-  val zioVersion            = "2.1.26"
-  val zioJsonVersion        = "0.9.2"
-  val zioConfigVersion      = "4.0.7"
-  val sttpVersion           = "3.11.0"
+  val zioLoggingVersion = "2.5.3"
+  val zioVersion        = "2.1.26"
+  val zioJsonVersion    = "0.9.2"
+  val zioConfigVersion  = "4.0.7"
+  val sttpVersion       = "3.11.0"
 }
 
 val scalaVersions = List("2.12.21", "2.13.18", "3.3.8")
