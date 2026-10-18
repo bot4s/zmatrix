@@ -17,7 +17,7 @@ object Versions {
   val sttpVersion       = "3.11.0"
 }
 
-val scalaVersions = List("2.12.21", "2.13.18", "3.3.8")
+val scalaVersions = List("2.12.21", "3.10.0", "3.3.8")
 
 trait Publishable extends PublishModule {
   override def artifactName   = "zmatrix"
